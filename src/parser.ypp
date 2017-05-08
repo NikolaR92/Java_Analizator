@@ -1,0 +1,25 @@
+%{
+#include iostream
+#include string
+#include cstdio
+
+using namespace std;
+
+int yyerror(string s){
+	cerr<<s<<endl;
+	exit(EXIT_FAILURE);
+}
+
+%}
+
+
+%%
+
+
+%%
+
+int main(){
+	yyparse();
+	return 0;
+
+}
