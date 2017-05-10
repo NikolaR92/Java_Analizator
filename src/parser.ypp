@@ -12,9 +12,7 @@ int yyerror(string s){
 
 %}
 
-
 %%
-
 
 %%
 

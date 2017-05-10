@@ -1,0 +1,27 @@
+CC = g++
+CFLAGS = -Wall
+PROGS = java
+
+$(PROGS): lex.yy.o parser.tab.o Syntree.o TypeTree.o SymbolTable.o
+	$(CC) $(CFLAGS) -o $@ $^
+	
+parser.tab.o: parser.tab.cpp parser.tab.hpp Syntree.hpp TypeTree.hpp SymbolTable.hpp
+	$(CC) $(CFLAGS) -c -o $@ $<
+	
+parser.tab.cpp parser.tab.hpp: parser.ypp
+	bison -d -v $<
+	
+lex.yy.o: lex.yy.c parser.tab.hpp Syntree.hpp TypeTree.hpp SymbolTable.hpp
+	$(CC) $(CFLAGS) -Who-sign-compare -c -o $@ $<
+	
+lex.yy.c: lexer.lex
+	flex $<
+	
+Syntree.o: Syntree.cpp Syntree.hpp
+	$(CC) $(CFLAGS) -c -o $@ $<
+	
+TypeTree.o: TypeTree.cpp TypeTree.hpp
+	$(CC) $(CFLAGS) -c -o $@ $<
+	
+SymbolTable.o: SymbolTable.cpp SymbolTable.hpp
+	$(CC) $(CFLAGS) -c -o $@ $<
