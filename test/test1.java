@@ -7,7 +7,7 @@ public class Main {
 		
 		char p = 'j';
 		
-		double e = 2,35;
+		double e = 2.35;
 		double m = e * 23;
 
 		float z=0;
@@ -29,7 +29,7 @@ public class Main {
 
 		int i=0;
 		while(i<11){
-			System.out.println("Brojac je: " + count);
+			System.out.println("Brojac je: " + i);
 			i++;
 		}
 		

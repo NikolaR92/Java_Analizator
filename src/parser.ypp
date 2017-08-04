@@ -1,7 +1,9 @@
 %{
-#include iostream
-#include string
-#include cstdio
+#include <iostream>
+#include <string>
+#include <cstdio>
+
+#define YYDEBUG 1
 
 using namespace std;
 
@@ -10,9 +12,48 @@ int yyerror(string s){
 	exit(EXIT_FAILURE);
 }
 
+int yylex();
+
 %}
 
+/*Prioriti operacija */
+
+%left '<' '>'
+%left '+' '-'
+%left '*'  '/' 
+
 %%
+
+Class: Array_Commands {}
+	|	Array_Methods {}
+	|
+	;
+	
+Array_Commands: Array_Commands Command {}
+		| Command {}
+		;
+		
+Command: Types ';'
+
+Types: Initialization 
+	| Initialization_Value 
+	| Value 
+	;
+	
+Initialization:	CHAR_TOKEN ID_TOKEN  {}
+	| DOUBLE_TOKEN ID_TOKEN
+	| FLOAT_TOKEN ID_TOKEN
+	| INT_TOKEN ID_TOKEN
+	| INT_TOKEN '['']' ID_TOKEN
+	| INT_TOKEN '['']''['']' ID_TOKEN
+	
+Initialization_Value: CHAR_TOKEN ID_TOKEN '=' C_TOKEN	 		 	
+				| DOUBLE_TOKEN ID_TOKEN '=' E
+				| INT_TOKEN ID_TOKEN = 'E'
+				| FLOAT_TOKEN ID_TOKE = 'E' 
+
+/*TODO Treba dovrsiti gramatiku, napraviti za operacije, kao i za komande */
+E:
 
 %%
 
