@@ -12,7 +12,7 @@ parser.tab.cpp parser.tab.hpp: parser.ypp
 	bison -d -v $<
 	
 lex.yy.o: lex.yy.c parser.tab.hpp Syntree.hpp TypeTree.hpp SymbolTable.hpp
-	$(CC) $(CFLAGS) -Who-sign-compare -c -o $@ $<
+	$(CC) $(CFLAGS) -Wno-sign-compare -c -o $@ $<
 	
 lex.yy.c: lexer.lex
 	flex $<

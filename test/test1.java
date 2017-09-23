@@ -5,40 +5,40 @@ public class Main {
 	public static void main(String[] args){
 		//TODO Auto-generated method stub
 		
-		char p = 'j';
+		char p3 = 'j';
 		
-		double e = 2.35;
-		double m = e * 23;
+		double e3 = 2.35;
+		double m3 = e3 * 23;
 
-		float z=0;
-		z=e/m;
+		float z3=0;
+		z3=e3/m3;
 
-		int m = 2 + 3;
-		int n = 30-20;
+		int m3 = 2 + 3;
+		int n3 = 30 - 20;
 		
 		
-		if(n<10)
-			n=n*n;
+		if(n3<10)
+			n3=n3*n3;
 		else
-			n=m;
+			n3=m3;
 
-		if(m>7){
-		   m=2;
+		if(m3>7){
+		   m3=2;
 		}			
 
 
-		int i=0;
-		while(i<11){
-			System.out.println("Brojac je: " + i);
-			i++;
+		int i3=0;
+		while(i3<11){
+			System.out.println(i3);
+			i3++;
 		}
 		
 		//Inicijalizacija niza
 		int []niz;
 		niz=new int[10];
 
-		for(i=0;i<10;i++){
-			niz[i]=i;
+		for(i3=0;i3<10;i3++){
+			niz[i3]=i3;
 		}
 		//drugi nacin inicijalizacije niza
 		int[] niz2={10,20,30,40,60};

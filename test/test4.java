@@ -5,29 +5,29 @@ public class Main {
 	public static void main(String[] args){
 		//TODO Auto-generated method stub
 		
-		String name = Nikola;
-		String surname = Ristic;
+		String name = 'N';
+		String surname = 'R';
 		int age = 25;		
 		
 
-		Person a;
-		a = new Person(name,surname,age);
+		Person an;
+		an = new Person(name,surname,age);
 
-		Person b = new Person("Jovana","Jelenkovic",)
+		Person nb = new Person('J','J');
 
-		surname = a.getSurname();
+		surname = an.getSurname();
 
-		b.setSurname(surname);
+		bn.setSurname(surname);
 
 
 		Person[] spisak;
 
 		spisak=new Person[10];
 
-		spisak[0]=a;
-		spisak[1]=b;
+		spisak[0]=an;
+		spisak[1]=bn;
 
-		System.out.println("Element na indeksu 0:" + spisak[0]);
+		System.out.println(spisak[0]);
 	}
 
 }

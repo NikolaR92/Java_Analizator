@@ -16,48 +16,388 @@ int yylex();
 
 %}
 
-/*Prioriti operacija */
+%token AND_TOKEN
+%token BOOLEAN_TOKEN
+%token CHAR_TOKEN CLASS_TOKEN char_token
+%token DO_TOKEN DOUBLE_TOKEN DIV_EQ_TOKEN DIM_TOKEN
+%token ELSE_TOKEN EXTEND_TOKEN EQ_EQ_TOKEN
+%token FINAL_TOKEN FLOAT_TOKEN FOR_TOKEN float_token 
+%token GT_EQ_TOKEN
+%token IF_TOKEN IMPORT_TOKEN INT_TOKEN ID_TOKEN int_token
+%token MINUS_MINUS_TOKEN MINUS_EQ_TOKEN MULT_EQ_TOKEN MOD_EQ_TOKEN
+%token NEW_TOKEN NULL_TOKEN NOT_EQ_TOKEN
+%token OR_TOKEN 
+%token PACKAGE_TOKEN PLUS_PLUS_TOKEN PUBLIC_TOKEN PRIVATE_TOKEN PROTECTED_TOKEN PLUS_EQ_TOKEN
+%token RETURN_TOKEN
+%token SUPER_TOKEN STATIC_TOKEN  
+%token  THIS_TOKEN  TRUE_TOKEN FALSE_TOKEN 
+%token 	WHILE_TOKEN    
+%token  LT_EQ_TOKEN    
 
-%left '<' '>'
-%left '+' '-'
-%left '*'  '/' 
+%nonassoc "then"
+%nonassoc ELSE_TOKEN 
+%left OR_TOKEN AND_TOKEN
+%left '>' '<' LT_EQ_TOKEN GT_EQ_TOKEN EQ_EQ_TOKEN NOT_EQ_TOKEN 
+%left '='
+%left '+' '-' MINUS_EQ_TOKEN PLUS_EQ_TOKEN
+%left '*' '/' '%' DIV_EQ_TOKEN MULT_EQ_TOKEN MOD_EQ_TOKEN
+%nonassoc PLUS_PLUS_TOKEN MINUS_MINUS_TOKEN 
+%left '.' 
+
 
 %%
+Compilation_unit: Package_statement Import_statements Type_declarations
+	| Package_statement Import_statement
+	| Package_statement Type_declarations
+	| Import_statements Type_declarations
+	| Package_statement
+	| Import_statements
+	| Type_declarations 
+	;
 
-Class: Array_Commands {}
-	|	Array_Methods {}
-	|
+Package_statement: PACKAGE_TOKEN Identifier ';'
+	;
+
+
+Import_statements: Import_statement
+	| Import_statements Import_statement	
+	;
+
+Import_statement: IMPORT_TOKEN Identifier ';'
+	| IMPORT_TOKEN Identifier '.' '*' ';'
+	;	
+	
+Type_declarations: Type_declaration_sem
+	| Type_declarations Type_declaration_sem
 	;
 	
-Array_Commands: Array_Commands Command {}
-		| Command {}
-		;
+Type_declaration_sem: Type_declaration
+	| Type_declaration ';'
+	;
+	
+Type_declaration: Class_definition '{' Field_declarations '}'
+	| Class_definition '{' '}'
+	;
+	
+Class_definition: Modifiers CLASS_TOKEN ID_TOKEN
+	| Modifiers CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN
+	| CLASS_TOKEN ID_TOKEN
+	| CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN
+	;
+	
+Modifiers: Modifier
+	| Modifiers Modifier
+	;
+	
+Modifier: PUBLIC_TOKEN
+	| PRIVATE_TOKEN
+	| PROTECTED_TOKEN
+	| STATIC_TOKEN
+	| FINAL_TOKEN
+	;
+	
+Field_declarations: Field_declaration_sem
+	| Field_declarations Field_declaration_sem
+	;
+	
+Field_declaration_sem: Field_declaration
+	| Field_declaration ';'
+	;
+	
+Field_declaration: Method_declaration
+	| Constructor_declaration
+	| Variable_declaration
+	| Type_declaration
+	;					
+	
+Method_declaration: Type_specifier Method_definition Method_body
+	| Modifiers Type_specifier Method_definition Method_body
+	;
+	
+Method_definition: ID_TOKEN '(' Parameter_list ')'
+	| ID_TOKEN '(' ')'
+	;
+	
+Parameter_list: Parameter
+	| Parameter_list ',' Parameter
+	;
+	
+Parameter: Type_specifier ID_TOKEN
+	;
+	
+Method_body: Statement_block
+	| ';'
+	;
+	
+Constructor_declaration: Modifiers Constructor_declarator Statement_block
+	| Constructor_declarator Statement_block
+	;
+	
+Constructor_declarator: ID_TOKEN '(' Parameter_list ')'
+	| ID_TOKEN '('  ')'
+	;
+	
+Variable_declaration: Modifiers Type_specifier Variable_declarators
+	| Type_specifier Variable_declarators
+
+	;
+	
+Variable_declarators: Variable_declarator
+	| Variable_declarators ',' Variable_declarator
+	;
+	
+Variable_declarator: ID_TOKEN 
+	| ID_TOKEN '=' Variable_initializer
+	;
+	
+Variable_initializer: Expression
+	| '{' '}'
+	| '{' Array_initializers '}' 
+	;
+	
+Array_initializers: Variable_initializer
+	| Array_initializers ',' Variable_initializer
+	| Array_initializers ','
+	;
+	
+Statement_block: '{' Local_statements '}'
+	| '{' '}'
+	;
+	
+Local_statements: Statements
+	| Local_statements Statements
+	;
+	
+Statements: Statement
+	| Variable_declaration_statement 
+	;
+	
+Variable_declaration_statement: Type_specifier Variable_declarators ';'
+	;
+	
+Statement: Empty_statement
+	| Expression_statement ';'
+	| If_statement
+	| Loop_statement
+	| Return_statement
+	| Statement_block
+	;
+	
+Empty_statement: ';'
+	;
+
+Expression_statement: Expression
+	;
+	
+If_statement: IF_TOKEN '(' Expression ')' Statement  %prec "then"
+	| IF_TOKEN '(' Expression ')' Statement ELSE_TOKEN Statement 
+	;
+	
+Loop_statement: WHILE_TOKEN '(' Expression ')' Statement 
+	| DO_TOKEN Statement WHILE_TOKEN '(' Expression ')' ';'
+	| FOR_TOKEN '(' For_init For_expression For_incr ')' Statement
+	| FOR_TOKEN '(' For_init For_expression  ')' Statement
+	;
+	
+For_init: Expression_statements ';'
+	| Variable_declaration_statement
+	| ';'
+	;
+	
+For_expression: Expression ';'
+	| ';'
+	;
+
+For_incr: Expression_statements
+	;
+	
+Expression_statements: Expression_statement
+	| Expression_statements ',' Expression_statement
+	;
+	
+Return_statement: RETURN_TOKEN Expression ';'
+	| RETURN_TOKEN ';'
+	;
+	
+Expression: Assignment_expression
+	;
+	
+Assignment_expression: Conditional_or_expression
+	| Unary_expression Assignment_operator Assignment_expression
+	;
+	
+Conditional_or_expression: Conditional_and_expression
+	| Conditional_or_expression OR_TOKEN Conditional_and_expression
+	;
+	
+Conditional_and_expression: Equality_expression
+	| Conditional_and_expression AND_TOKEN Equality_expression
+	;
+	
+/* == i != */	
+Equality_expression: Relational_expression
+	| Equality_expression EQ_EQ_TOKEN Relational_expression
+	| Equality_expression NOT_EQ_TOKEN Relational_expression
+	;				
+			
+Relational_expression: Additive_expression
+	| Relational_expression '<' Additive_expression
+	| Relational_expression '>' Additive_expression
+	| Relational_expression LT_EQ_TOKEN Additive_expression
+	| Relational_expression GT_EQ_TOKEN Additive_expression
+	;
+	
+Additive_expression: Multiplicative_expression
+	| Additive_expression '+' Multiplicative_expression
+	| Additive_expression '-' Multiplicative_expression
+	;
+	
+Multiplicative_expression: Cast_expression
+	| Multiplicative_expression '*' Cast_expression
+	| Multiplicative_expression '/' Cast_expression
+	| Multiplicative_expression '%' Cast_expression
+	;
+	
+Cast_expression: Unary_expression
+	| '(' Primitive_type_expression ')' Cast_expression
+	| '(' Class_type_expression ')' Cast_expression
+	;
+	
+Unary_expression: PLUS_PLUS_TOKEN Unary_expression
+	| MINUS_MINUS_TOKEN Unary_expression
+	| Postfix_expression
+	;
+	
+Postfix_expression: Primary_expression
+	| Real_postfix_expression
+	;
+	
+Real_postfix_expression: Postfix_expression PLUS_PLUS_TOKEN
+	| Postfix_expression MINUS_MINUS_TOKEN
+	;
+	
+Primary_expression: Identifier
+	| Not_just_name
+	;
+	
+Not_just_name: Special_name
+	| New_allocation_expression
+	| Complex_primary
+	;
+	
+Special_name: THIS_TOKEN
+	| SUPER_TOKEN
+	;
+	
+New_allocation_expression: Plain_new_allocation_expression
+	| Identifier '.' Plain_new_allocation_expression
+	;
+	
+Plain_new_allocation_expression: Array_allocation_expression
+	| Class_allocation_expression
+	| Array_allocation_expression '{' '}'
+	| Class_allocation_expression '{' '}'														
+	| Array_allocation_expression '{' Array_initializers '}'
+	| Class_allocation_expression '{' Field_declarations '}'
+	;
+	
+Class_allocation_expression: NEW_TOKEN Type_name '(' Argument_list ')' 
+	| NEW_TOKEN Type_name '(' ')'
+	;
+	
+Type_name: Primitive_type
+	| Identifier 
+	;
+	
+Primitive_type: BOOLEAN_TOKEN
+	| CHAR_TOKEN
+	| INT_TOKEN
+	| FLOAT_TOKEN
+	| DOUBLE_TOKEN
+	;
+	
+Argument_list: Expression
+	| Argument_list ',' Expression
+	;
+	
+Array_allocation_expression: NEW_TOKEN Type_name Dimension_expressions Dims
+	| NEW_TOKEN Type_name Dimension_expressions								 		
+	| NEW_TOKEN Type_name Dims
+	;
+	
+Dimension_expressions: Dimension_expression
+	| Dimension_expressions Dimension_expression
+	;
+	
+Dimension_expression: '[' Expression ']'
+	;
+	
+Dims: Dim
+	| Dims Dim
+	;
+	
+Dim: DIM_TOKEN
+	;
+	
+Complex_primary: '(' Expression ')' 
+	| Complex_primary_2
+	;
+	
+Complex_primary_2: int_token
+	| float_token
+	| TRUE_TOKEN
+	| FALSE_TOKEN
+	| char_token
+	| Array_access
+	| Field_access
+	| Method_call
+	;
+	
+Array_access: ID_TOKEN '[' Expression ']'
+	| Complex_primary '[' Expression ']' 
+	;
+	
+Field_access: Not_just_name '.' ID_TOKEN
+	| Real_postfix_expression '.' ID_TOKEN
+	| Identifier '.' THIS_TOKEN
+	;						
+				
+Method_call: Method_access '(' Argument_list ')'
+	| Method_access '('  ')'
+	;											
+				
+Method_access: Complex_primary_2
+	| Special_name
+	| Identifier
+	;		
+					
+Primitive_type_expression: Primitive_type
+	| Primitive_type Dims
+	;
+	
+Class_type_expression: Identifier Dims
+	;
+	
+Assignment_operator: '='
+	| MINUS_EQ_TOKEN
+	| PLUS_EQ_TOKEN
+	| MULT_EQ_TOKEN
+	| DIV_EQ_TOKEN
+	| MOD_EQ_TOKEN
+	;
+	
+Type_specifier: Type_name Dims
+	| Type_name 
+	;			
 		
-Command: Types ';'
-
-Types: Initialization 
-	| Initialization_Value 
-	| Value 
-	;
-	
-Initialization:	CHAR_TOKEN ID_TOKEN  {}
-	| DOUBLE_TOKEN ID_TOKEN
-	| FLOAT_TOKEN ID_TOKEN
-	| INT_TOKEN ID_TOKEN
-	| INT_TOKEN '['']' ID_TOKEN
-	| INT_TOKEN '['']''['']' ID_TOKEN
-	
-Initialization_Value: CHAR_TOKEN ID_TOKEN '=' C_TOKEN	 		 	
-				| DOUBLE_TOKEN ID_TOKEN '=' E
-				| INT_TOKEN ID_TOKEN = 'E'
-				| FLOAT_TOKEN ID_TOKE = 'E' 
-
-/*TODO Treba dovrsiti gramatiku, napraviti za operacije, kao i za komande */
-E:
-
+Identifier: ID_TOKEN 
+	| Identifier '.' ID_TOKEN
+	;		
+			
 %%
 
 int main(){
+	yydebug=1;
 	yyparse();
 	return 0;
 

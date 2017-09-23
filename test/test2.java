@@ -1,53 +1,53 @@
 package test;
 
 public class Person{
-	String name;
-	String surname;
+	char name;
+	char surname;
 	int age;
 	
 	public Person(){
 
 	}
 
-	public Person(String name){
-		this.name=name;
+	public Person(char name){
+		name=name;
 	}
 
-	public Person(String name,String surname){
-		this.name=name;
-		this.surname=surname;
+	public Person(char name,char surname){
+		name=name;
+		surname=surname;
 
 	}
 
-	public Person(String name, String surname, int age){
-		this.name=name;
-		this.surname=surname;
-		this.age=age;
+	public Person(char name, char surname, int age){
+		name=name;
+		surname=surname;
+		age=age;
 	}
 
-	public Person(Person a){
-		this.name=a.getName();
-		this.surname=a.surname;
-		this.age=a.age;
-	}
-
-	//set method for name
-	public void setName(String newName){
-		this.name=newName;
-	}
-
-	//get method for name
-	public String getName(){
-		return this.name;
+	//komentar
+	public Person(Person ab){
+		this.name = ab.getName( );
+		super.surname = ab.surname;
+		age = ab.age;
 	}	
 	
-	//set method for surname
-	public void setSurname(String newSurname){
+	public char setName(char newName){
+		name=newName;
+	}
+
+	
+	public char getName(){
+		return name;
+	}	
+	
+	
+	public char setSurname(char newSurname){
 		surname=newSurname;
 	}
 
-	//get method for surname
-	public String getSurname(){
+	
+	public char getSurname(){
 		return surname;
 	}
 

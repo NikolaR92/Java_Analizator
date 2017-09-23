@@ -5,19 +5,19 @@ public class Main {
 	public static void main(String[] args){
 		//TODO Auto-generated method stub
 		
-		String name = Nikola;
-		String surname = Ristic;
+		char name = 'n';
+		char surname = 'm';
 		int age = 25;		
 
 
-		Person a;
-		a = new Person(name,surname,age);
+		Person an;
+		an = new Person(name,surname,age);
 
-		Person b = new Person("Jovana","Jelenkovic",)
+		Person be = new Person('a','s');
 
-		surname = a.getSurname();
+		surname = an.getSurname();
 
-		b.setSurname(surname);
+		bn.setSurname(surname);
 	}
 
 }
