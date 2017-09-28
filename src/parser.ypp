@@ -2,6 +2,10 @@
 #include <iostream>
 #include <string>
 #include <cstdio>
+#include <map>
+
+
+#include "InnerSynTree.hpp"
 
 #define YYDEBUG 1
 
@@ -14,12 +18,22 @@ int yyerror(string s){
 
 int yylex();
 
+map<string,HashT*> tablice_simbola;
+
 %}
+
+%union{
+ int int_number;
+ double double_number;
+ char char_type;
+ string* id_string;
+ SynTree *syn_atrb;
+}
 
 %token AND_TOKEN
 %token BOOLEAN_TOKEN
 %token CHAR_TOKEN CLASS_TOKEN char_token
-%token DO_TOKEN DOUBLE_TOKEN DIV_EQ_TOKEN DIM_TOKEN
+%token DO_TOKEN DOUBLE_TOKEN DIV_EQ_TOKEN DIM_TOKEN double_token
 %token ELSE_TOKEN EXTEND_TOKEN EQ_EQ_TOKEN
 %token FINAL_TOKEN FLOAT_TOKEN FOR_TOKEN float_token 
 %token GT_EQ_TOKEN
@@ -312,7 +326,6 @@ Type_name: Primitive_type
 Primitive_type: BOOLEAN_TOKEN
 	| CHAR_TOKEN
 	| INT_TOKEN
-	| FLOAT_TOKEN
 	| DOUBLE_TOKEN
 	;
 	
@@ -344,7 +357,7 @@ Complex_primary: '(' Expression ')'
 	;
 	
 Complex_primary_2: int_token
-	| float_token
+	| double_token
 	| TRUE_TOKEN
 	| FALSE_TOKEN
 	| char_token

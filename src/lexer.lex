@@ -8,6 +8,7 @@
 
 using namespace std;
 
+#include "Syntree.hpp"
 #include "parser.tab.hpp"
 
 %}
@@ -56,13 +57,13 @@ using namespace std;
 "!=" return NOT_EQ_TOKEN;
 "&&" return AND_TOKEN;
 "||" return OR_TOKEN;
-"\[\]" return DIM_TOKEN;
+\[([ \t]*)\] return DIM_TOKEN;
 
-[+-]?[0-9]+ return int_token;
-[+-]?[0-9]+\.?[0-9]* return float_token;
+[+-]?[0-9]+ { yylval.int_number = atoi(yytext); return int_token;}
 [-<>:=.()+*/{}\[\]!%;,] return *yytext;
-[a-zA-Z$_][a-zA-Z$0-9_]* return ID_TOKEN;
-\'[a-zA-Z0-9]\' return char_token;
+[+-]?[0-9]+\.?[0-9]* {yylval.double_number= atof(yytext); return double_token;}
+[a-zA-Z$_][a-zA-Z$0-9_]* {yylval.id_string=new string(yytext); return ID_TOKEN;}
+\'[a-zA-Z0-9]\' {yylval.char_type = *yytext; return char_token;}
 
 "/*" { BEGIN(M_LINE_COMMENT); }
 <M_LINE_COMMENT>"*/" {BEGIN(INITIAL);}
