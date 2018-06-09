@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -Wall
 PROGS = java
 
-$(PROGS): lex.yy.o parser.tab.o Syntree.o TypeTree.o SymbolTable.o InnerSynTree.o
+$(PROGS): lex.yy.o parser.tab.o Syntree.o TypeTree.o SymbolTable.o InnerSynTree.o Method.o
 	$(CC) $(CFLAGS) -o $@ $^
 	
 parser.tab.o: parser.tab.cpp parser.tab.hpp Syntree.hpp InnerSynTree.hpp TypeTree.hpp SymbolTable.hpp
@@ -20,11 +20,14 @@ lex.yy.c: lexer.lex
 Syntree.o: Syntree.cpp Syntree.hpp
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-InnerSynTree.o: InnerSynTree.cpp InnerSynTree.hpp
+InnerSynTree.o: InnerSynTree.cpp InnerSynTree.hpp 
 	$(CC) $(CFLAGS) -c -o $@ $<
 	
-TypeTree.o: TypeTree.cpp TypeTree.hpp
+TypeTree.o: TypeTree.cpp TypeTree.hpp 
 	$(CC) $(CFLAGS) -c -o $@ $<
 	
 SymbolTable.o: SymbolTable.cpp SymbolTable.hpp
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+Method.o: Method.cpp Method.hpp
 	$(CC) $(CFLAGS) -c -o $@ $<

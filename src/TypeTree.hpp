@@ -5,31 +5,47 @@
 
 using namespace std;
 
+
 class TypeTree{
 public:
+	TypeTree(string modifier)
+	:_modifier(modifier)
+	{} 
 	~TypeTree();
 	virtual string getType() const=0;
+	string getModifier() const;
+protected:
+	string _modifier;
 };
 
 class IntType : public TypeTree{
 public:
+	IntType(string modifier)
+	:TypeTree(modifier)
+	{}
 	string getType() const;
 };
 
-class FloatType : public TypeTree{
-public:
+class DoubleType : public TypeTree{
+public: 
+	DoubleType(string modifier)
+	:TypeTree(modifier)
+	{}
 	string getType() const;
 };
 
 class CharType : public TypeTree{
 public:
+	CharType(string modifier)
+	:TypeTree(modifier)
+	{}
 	string getType() const;
 };
 
 class ArrayType : public TypeTree{
 public:
-	ArrayType(TypeTree* tip,int size)
-	:_tip(tip),_size(size)
+	ArrayType(string modifier,TypeTree* tip,int size)
+	:TypeTree(modifier),_tip(tip),_size(size)
 	{}
 	string getType() const;
 	TypeTree* getTip();
@@ -39,25 +55,12 @@ private:
 	int _size;
 };
 
-class MatrixType : public TypeTree{
-public:
-	MatrixType(TypeTree* tip, int size1, int size2)
-	:_tip(tip),_size1(size1),_size2(size2)
-	{}
-	string getType() const;
-	TypeTree* getTip();
-	int getSize1();
-	int getSize2();
-private:
-	TypeTree* _tip;
-	int _size1;
-	int _size2;
-};
 
+//treba proveriti sta dodati u tip objekat, da li samo definiciju klase ili da se doda cela klasa.
 class ObjectType : public TypeTree{
 public:
-	ObjectType(string name)
-	: _name(name)
+	ObjectType(string modifier,string name)
+	: TypeTree(modifier),_name(name)
 	{}
 	string getType() const;
 private:
@@ -66,6 +69,9 @@ private:
 
 class BooleanType : public TypeTree{
 public:
+	BooleanType(string modifier)
+	:TypeTree(modifier)
+	{}
 	string getType() const;
 };
 

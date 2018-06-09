@@ -3,8 +3,9 @@
 #include <string>
 #include <cstdio>
 #include <map>
+#include <stack>
 
-
+#include "Syntree.hpp"
 #include "InnerSynTree.hpp"
 
 #define YYDEBUG 1
@@ -18,8 +19,8 @@ int yyerror(string s){
 
 int yylex();
 
-map<string,HashT*> tablice_simbola;
-
+//stack<map<string,vector<Method>> stek_metoda; 
+extern stack<map<string,HashT*>> stek_promenljivih;
 %}
 
 %union{
@@ -27,7 +28,14 @@ map<string,HashT*> tablice_simbola;
  double double_number;
  char char_type;
  string* id_string;
- SynTree *syn_atrb;
+ SynTree* syn_atrb;
+ SynList* syn_list;
+ ClassDefinition* class_def;
+ Modifier* modf;
+ MethodDefinition* meth_def;
+ ConstructorDeclarator* con_def;
+ TypeTree* t;
+ Dimension* d;
 }
 
 %token AND_TOKEN
@@ -48,6 +56,30 @@ map<string,HashT*> tablice_simbola;
 %token 	WHILE_TOKEN    
 %token  LT_EQ_TOKEN    
 
+
+
+%type<syn_atrb> Import_statement Type_declaration_sem Type_declaration Field_declaration_sem Field_declaration
+%type<syn_atrb> Method_declaration Parameter Method_body Statement_block Constructor_declaration Variable_declaration
+%type<syn_atrb> Variable_declarator Variable_initializer Statement Variable_declaration_statement Empty_statement
+%type<syn_atrb> Expression_statement If_statement Loop_statement For_init For_expression For_incr Return_statement
+%type<syn_atrb> Expression Assignment_expression Conditional_or_expression Unary_expression Conditional_and_expression
+%type<syn_atrb> Equality_expression Relational_expression Additive_expression Multiplicative_expression
+%type<syn_atrb> Postfix_expression Primary_expression Real_postfix_expression Not_just_name Special_name
+%type<syn_atrb> New_allocation_expression Complex_primary Class_allocation_expression Array_allocation_expression
+%type<syn_atrb> Complex_primary_2 Array_access Field_access Method_call Method_access Statements Plain_new_allocation_expression
+%type<syn_list> Import_statements Type_declarations Field_declarations Parameter_list Variable_declarators
+%type<syn_list> Array_initializers Local_statements Argument_list Expression_statements
+%type<d> Dimension_expression Dim
+%type<class_def> Class_definition
+%type<modf> Modifier
+%type<con_def> Constructor_declarator
+%type<t> Type_name Type_specifier Primitive_type
+%type<meth_def> Method_definition
+%type<id_string> Identifier ID_TOKEN
+%type<int_number> int_token
+%type<double_number> double_token
+%type<char_type> char_token
+
 %nonassoc "then"
 %nonassoc ELSE_TOKEN 
 %left OR_TOKEN AND_TOKEN
@@ -60,358 +92,394 @@ map<string,HashT*> tablice_simbola;
 
 
 %%
-Compilation_unit: Package_statement Import_statements Type_declarations
-	| Package_statement Import_statement
-	| Package_statement Type_declarations
-	| Import_statements Type_declarations
-	| Package_statement
-	| Import_statements
-	| Type_declarations 
+Compilation_unit: Package_statement Import_statements Type_declarations  {$2->fill_table("",""); 
+																			$3->fill_table("",""); $3->check("","");}
+	| Package_statement Import_statement {$2->fill_table("","");}
+	| Package_statement Type_declarations {$2->fill_table("",""); $2->check("","");}
+	| Import_statements Type_declarations  {$1->fill_table("",""); $2->fill_table("",""); $2->check("","");}
+	| Package_statement {}
+	| Import_statements {$1->fill_table("","");}
+	| Type_declarations {$1->fill_table("",""); $1->check("","");}
 	;
 
-Package_statement: PACKAGE_TOKEN Identifier ';'
+Package_statement: PACKAGE_TOKEN Identifier ';' {}
 	;
 
 
-Import_statements: Import_statement
-	| Import_statements Import_statement	
+Import_statements: Import_statement  {$$= new SynList($1);}  
+	| Import_statements Import_statement	{$$= $1;
+												$$->addNext($2);}
 	;
 
-Import_statement: IMPORT_TOKEN Identifier ';'
-	| IMPORT_TOKEN Identifier '.' '*' ';'
+Import_statement: IMPORT_TOKEN Identifier ';' {$$= new Import(*$2);
+												delete $2;}
 	;	
 	
-Type_declarations: Type_declaration_sem
-	| Type_declarations Type_declaration_sem
+Type_declarations: Type_declaration_sem  {$$=new SynList($1);}
+	| Type_declarations Type_declaration_sem {$$=$1;
+											  $$->addNext($2);}
 	;
 	
-Type_declaration_sem: Type_declaration
-	| Type_declaration ';'
+Type_declaration_sem: Type_declaration {$$=$1;}
+	| Type_declaration ';' {$$=$1;}
 	;
 	
-Type_declaration: Class_definition '{' Field_declarations '}'
-	| Class_definition '{' '}'
+Type_declaration: Class_definition '{' Field_declarations '}' {$$=new ClassDeclaration($1,$3);} 
+	| Class_definition '{' '}' {$$=new ClassDeclaration($1);}
 	;
 	
-Class_definition: Modifiers CLASS_TOKEN ID_TOKEN
-	| Modifiers CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN
-	| CLASS_TOKEN ID_TOKEN
-	| CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN
+Class_definition: Modifier CLASS_TOKEN ID_TOKEN {$$= new ClassDefinition($1,*$3);
+												delete $3;}
+	| Modifier CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN {$$= new ClassDefinition($1,*$3,*$5);
+															delete $3;
+															delete $5;}
+	| CLASS_TOKEN ID_TOKEN {$$= new ClassDefinition(*$2);
+									delete $2;}
+	| CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN {$$= new ClassDefinition(*$2,*$4);
+													delete $2;
+													delete $4;}
+	;
+
+Modifier: PUBLIC_TOKEN {$$= new Modifier("public");}
+	| PRIVATE_TOKEN	   {$$= new Modifier("private");}
+	| PROTECTED_TOKEN	{$$= new Modifier("protected");}
+	;
+		
+Field_declarations: Field_declaration_sem {$$= new SynList($1);}
+	| Field_declarations Field_declaration_sem {$$= $1;
+												$$->addNext($2);}
 	;
 	
-Modifiers: Modifier
-	| Modifiers Modifier
+Field_declaration_sem: Field_declaration {$$=$1;}
+	| Field_declaration ';' {$$=$1;}
 	;
 	
-Modifier: PUBLIC_TOKEN
-	| PRIVATE_TOKEN
-	| PROTECTED_TOKEN
-	| STATIC_TOKEN
-	| FINAL_TOKEN
-	;
-	
-Field_declarations: Field_declaration_sem
-	| Field_declarations Field_declaration_sem
-	;
-	
-Field_declaration_sem: Field_declaration
-	| Field_declaration ';'
-	;
-	
-Field_declaration: Method_declaration
-	| Constructor_declaration
-	| Variable_declaration
-	| Type_declaration
+Field_declaration: Method_declaration  {$$=$1;}
+	| Constructor_declaration {$$=$1;}
+	| Variable_declaration {$$=$1;}
+	//| Type_declaration {$$=$1;}
 	;					
-	
-Method_declaration: Type_specifier Method_definition Method_body
-	| Modifiers Type_specifier Method_definition Method_body
-	;
-	
-Method_definition: ID_TOKEN '(' Parameter_list ')'
-	| ID_TOKEN '(' ')'
-	;
-	
-Parameter_list: Parameter
-	| Parameter_list ',' Parameter
-	;
-	
-Parameter: Type_specifier ID_TOKEN
-	;
-	
-Method_body: Statement_block
-	| ';'
-	;
-	
-Constructor_declaration: Modifiers Constructor_declarator Statement_block
-	| Constructor_declarator Statement_block
-	;
-	
-Constructor_declarator: ID_TOKEN '(' Parameter_list ')'
-	| ID_TOKEN '('  ')'
-	;
-	
-Variable_declaration: Modifiers Type_specifier Variable_declarators
-	| Type_specifier Variable_declarators
 
+	
+Method_declaration: Type_specifier Method_definition Method_body  {$$=new MethodDeclaration($1,$2,$3);}
+	| Modifier Type_specifier Method_definition Method_body {$$=new MethodDeclaration($1,$2,$3,$4);}
 	;
 	
-Variable_declarators: Variable_declarator
-	| Variable_declarators ',' Variable_declarator
+
+Method_definition: ID_TOKEN '(' Parameter_list ')'  {$$= new MethodDefinition(*$1,$3);
+													 delete $1;}
+	| ID_TOKEN '(' ')' {$$= new MethodDefinition(*$1);
+						delete $1;}
 	;
 	
-Variable_declarator: ID_TOKEN 
-	| ID_TOKEN '=' Variable_initializer
+	
+Parameter_list: Parameter  {$$= new SynList($1);}
+	| Parameter_list ',' Parameter {$$= $1;
+									$$->addNext($3);}
 	;
 	
-Variable_initializer: Expression
-	| '{' '}'
-	| '{' Array_initializers '}' 
+	
+Parameter: Type_specifier ID_TOKEN {$$= new Parameter($1,*$2);
+									delete $2;}
 	;
 	
-Array_initializers: Variable_initializer
-	| Array_initializers ',' Variable_initializer
-	| Array_initializers ','
-	;
 	
-Statement_block: '{' Local_statements '}'
-	| '{' '}'
-	;
-	
-Local_statements: Statements
-	| Local_statements Statements
-	;
-	
-Statements: Statement
-	| Variable_declaration_statement 
-	;
-	
-Variable_declaration_statement: Type_specifier Variable_declarators ';'
-	;
-	
-Statement: Empty_statement
-	| Expression_statement ';'
-	| If_statement
-	| Loop_statement
-	| Return_statement
-	| Statement_block
-	;
-	
-Empty_statement: ';'
+Method_body: Statement_block {$$=$1;}
+	| ';' {$$=NULL;}
 	;
 
-Expression_statement: Expression
+
+Constructor_declaration: Modifier Constructor_declarator Statement_block {$$=new ConstructorDeclaration($1,$2,$3);}
+	| Constructor_declarator Statement_block {$$=new ConstructorDeclaration($1,$2);}
 	;
 	
-If_statement: IF_TOKEN '(' Expression ')' Statement  %prec "then"
-	| IF_TOKEN '(' Expression ')' Statement ELSE_TOKEN Statement 
-	;
 	
-Loop_statement: WHILE_TOKEN '(' Expression ')' Statement 
-	| DO_TOKEN Statement WHILE_TOKEN '(' Expression ')' ';'
-	| FOR_TOKEN '(' For_init For_expression For_incr ')' Statement
-	| FOR_TOKEN '(' For_init For_expression  ')' Statement
-	;
-	
-For_init: Expression_statements ';'
-	| Variable_declaration_statement
-	| ';'
-	;
-	
-For_expression: Expression ';'
-	| ';'
+Constructor_declarator: ID_TOKEN '(' Parameter_list ')' {$$=new ConstructorDeclarator(*$1,$3);
+															delete $1;}
+	| ID_TOKEN '('  ')' {$$=new ConstructorDeclarator(*$1);
+							delete $1;}
 	;
 
-For_incr: Expression_statements
+	
+Variable_declaration: Modifier Type_specifier Variable_declarators {$$= new VariableDeclaration($1,$2,$3);}
+	| Type_specifier Variable_declarators {$$=new VariableDeclaration($1,$2);}
 	;
 	
-Expression_statements: Expression_statement
-	| Expression_statements ',' Expression_statement
+	
+Variable_declarators: Variable_declarator  {$$=new SynList($1);}
+	| Variable_declarators ',' Variable_declarator {$$=$1;
+													$$->addNext($3);}
 	;
 	
-Return_statement: RETURN_TOKEN Expression ';'
-	| RETURN_TOKEN ';'
+Variable_declarator: ID_TOKEN {$$=new VariableST(*$1);
+								delete $1;}
+	| ID_TOKEN '=' Variable_initializer {$$= new AssignSynTree(new VariableST(*$1),$3);
+										delete $1;}
 	;
 	
-Expression: Assignment_expression
+Variable_initializer: Expression {$$=$1;}
+	| '{' '}' {$$=NULL;}
+	| '{' Array_initializers '}' {$$=$2; }
+	;
+
+
+Array_initializers: Variable_initializer { $$= new SynList($1);}
+	| Array_initializers ',' Variable_initializer {$$=$1;
+													$$->addNext($3);}
+	| Array_initializers ',' {$$=$1;}
 	;
 	
-Assignment_expression: Conditional_or_expression
-	| Unary_expression Assignment_operator Assignment_expression
+Statement_block: '{' Local_statements '}' {$$=$2;}
+	| '{' '}' {$$=NULL;}
+	;
+
+	
+Local_statements: Statements  {$$= new SynList($1);}
+	| Local_statements Statements {$$=$1;
+									$$->addNext($2);}
 	;
 	
-Conditional_or_expression: Conditional_and_expression
-	| Conditional_or_expression OR_TOKEN Conditional_and_expression
+Statements: Statement {$$=$1;}
+	| Variable_declaration_statement {$$=$1;} 
+	;
+
+	
+Variable_declaration_statement: Type_specifier Variable_declarators ';' {$$=new VariableDeclaration($1,$2);} 
 	;
 	
-Conditional_and_expression: Equality_expression
-	| Conditional_and_expression AND_TOKEN Equality_expression
+Statement: Empty_statement  {$$=$1;}
+	| Expression_statement ';' {$$=$1;}
+	| If_statement  {$$=$1;}
+	| Loop_statement  {$$=$1;}
+	| Return_statement {$$=$1;}
+	| Statement_block  {$$=$1;}
+	;
+	
+Empty_statement: ';' {$$=NULL;}
+	;
+
+Expression_statement: Expression {$$=$1;}
+	;
+	
+If_statement: IF_TOKEN '(' Expression ')' Statement  %prec "then"  {$$=new IfSynTree($3,$5);}
+	| IF_TOKEN '(' Expression ')' Statement ELSE_TOKEN Statement   {$$=new IfThenSynTree($3,$5,$7);}
+	;
+	
+Loop_statement: WHILE_TOKEN '(' Expression ')' Statement  {$$=new WhileSynTree($3,$5);}
+	| DO_TOKEN Statement WHILE_TOKEN '(' Expression ')' ';' {$$=new DoWhileSynTree($2,$5);}
+	| FOR_TOKEN '(' For_init For_expression For_incr ')' Statement {$$=new ForSynTree($3,$4,$5,$7);}
+	| FOR_TOKEN '(' For_init For_expression  ')' Statement {$$=new ForSynTree($3,$4,$6);}
+	;
+	
+For_init: Expression_statements ';' {$$=$1;}
+	| Variable_declaration_statement {$$=$1;}
+	| ';' {$$=NULL;}
+	;
+	
+For_expression: Expression ';' {$$=$1;}
+	| ';' {$$=NULL;}
+	;
+
+For_incr: Expression_statements  {$$=$1;}
+	;
+	
+Expression_statements: Expression_statement {$$= new SynList($1);}
+	| Expression_statements ',' Expression_statement {$$= $1;
+													$$->addNext($3);}
+	;
+	
+
+Return_statement: RETURN_TOKEN Expression ';' {$$= new Return($2);}
+	;
+	
+Expression: Assignment_expression {$$=$1;}
+	;
+
+//Assignment_operator: '='
+	
+	
+Assignment_expression: Conditional_or_expression  {$$ = $1;}
+	| Unary_expression '=' Assignment_expression {$$ = new AssignSynTree($1,$3);}
+	| Unary_expression MINUS_EQ_TOKEN Assignment_expression {$$ = new AssignSynTree($1,new SubSynTree($1,$3));}
+	| Unary_expression PLUS_EQ_TOKEN Assignment_expression {$$ = new AssignSynTree($1,new AddSynTree($1,$3));}
+	| Unary_expression MULT_EQ_TOKEN Assignment_expression {$$ = new AssignSynTree($1,new MulSynTree($1,$3));}
+	| Unary_expression DIV_EQ_TOKEN Assignment_expression  {$$ = new AssignSynTree($1,new DivSynTree($1,$3));}
+	| Unary_expression MOD_EQ_TOKEN Assignment_expression  {$$ = new AssignSynTree($1,new ModSynTree($1,$3));}
+	;
+	
+Conditional_or_expression: Conditional_and_expression {$$=$1;}
+	| Conditional_or_expression OR_TOKEN Conditional_and_expression {$$=new OrSynTree($1,$3);}
+	;
+	
+Conditional_and_expression: Equality_expression {$$=$1;}
+	| Conditional_and_expression AND_TOKEN Equality_expression {$$=new AndSynTree($1,$3);}
 	;
 	
 /* == i != */	
-Equality_expression: Relational_expression
-	| Equality_expression EQ_EQ_TOKEN Relational_expression
-	| Equality_expression NOT_EQ_TOKEN Relational_expression
+Equality_expression: Relational_expression {$$=$1;}
+	| Equality_expression EQ_EQ_TOKEN Relational_expression {$$= new EqSynTree($1,$3);} 
+	| Equality_expression NOT_EQ_TOKEN Relational_expression {$$= new NotEqSynTree($1,$3);}
 	;				
-			
-Relational_expression: Additive_expression
-	| Relational_expression '<' Additive_expression
-	| Relational_expression '>' Additive_expression
-	| Relational_expression LT_EQ_TOKEN Additive_expression
-	| Relational_expression GT_EQ_TOKEN Additive_expression
+	
+Relational_expression: Additive_expression {$$=$1;}
+	| Relational_expression '<' Additive_expression {$$ = new LTSynTree($1,$3);} 
+	| Relational_expression '>' Additive_expression {$$ = new GTSynTree($1,$3);}
+	| Relational_expression LT_EQ_TOKEN Additive_expression {$$ = new LTESynTree($1,$3);}
+	| Relational_expression GT_EQ_TOKEN Additive_expression {$$ = new GTESynTree($1,$3);}
 	;
 	
-Additive_expression: Multiplicative_expression
-	| Additive_expression '+' Multiplicative_expression
-	| Additive_expression '-' Multiplicative_expression
+Additive_expression: Multiplicative_expression {$$=$1;}
+	| Additive_expression '+' Multiplicative_expression {$$ = new AddSynTree($1,$3);}
+	| Additive_expression '-' Multiplicative_expression {$$ = new SubSynTree($1,$3);}
 	;
 	
-Multiplicative_expression: Cast_expression
-	| Multiplicative_expression '*' Cast_expression
-	| Multiplicative_expression '/' Cast_expression
-	| Multiplicative_expression '%' Cast_expression
+Multiplicative_expression: Unary_expression {$$=$1;}
+	| Multiplicative_expression '*' Unary_expression {$$ = new MulSynTree($1,$3);}
+	| Multiplicative_expression '/' Unary_expression {$$ = new DivSynTree($1,$3);}
+	| Multiplicative_expression '%' Unary_expression {$$ = new ModSynTree($1,$3);}
 	;
 	
-Cast_expression: Unary_expression
-	| '(' Primitive_type_expression ')' Cast_expression
-	| '(' Class_type_expression ')' Cast_expression
+	
+Unary_expression: PLUS_PLUS_TOKEN Unary_expression {$$=new PrefixAdd($2);} 
+	| MINUS_MINUS_TOKEN Unary_expression {$$=new PrefixSub($2);}
+	| Postfix_expression {$$=$1;}
 	;
 	
-Unary_expression: PLUS_PLUS_TOKEN Unary_expression
-	| MINUS_MINUS_TOKEN Unary_expression
-	| Postfix_expression
+Postfix_expression: Primary_expression {$$=$1;}
+	| Real_postfix_expression {$$=$1;}
+	;
+
+
+Real_postfix_expression: Postfix_expression PLUS_PLUS_TOKEN {$$= new PostfixAdd($1);}
+	| Postfix_expression MINUS_MINUS_TOKEN {$$= new PostfixSub($1);}
 	;
 	
-Postfix_expression: Primary_expression
-	| Real_postfix_expression
+Primary_expression: Identifier {$$=new VariableST(*$1);}
+	| Not_just_name {$$=$1;}
 	;
 	
-Real_postfix_expression: Postfix_expression PLUS_PLUS_TOKEN
-	| Postfix_expression MINUS_MINUS_TOKEN
+Not_just_name: Special_name {$$=$1;}
+	| New_allocation_expression {$$=$1;}
+	| Complex_primary {$$=$1;}
+	;
+
+
+Special_name: THIS_TOKEN  {$$=new ThisST();}  
+	| SUPER_TOKEN {$$=new SuperST();}
+	;
+
+//Proveriti gramatiku	
+New_allocation_expression: Plain_new_allocation_expression { $$=$1;}
+	//| Identifier '.' Plain_new_allocation_expression {}
 	;
 	
-Primary_expression: Identifier
-	| Not_just_name
+Plain_new_allocation_expression: Array_allocation_expression {$$=$1;}
+	| Class_allocation_expression {$$=$1;}
+	| Array_allocation_expression '{' '}' { $$=$1;}													
+	| Array_allocation_expression '{' Array_initializers '}' {}
 	;
 	
-Not_just_name: Special_name
-	| New_allocation_expression
-	| Complex_primary
+Class_allocation_expression: NEW_TOKEN Type_name '(' Argument_list ')' {$$= new NewObject($2,$4);}   
+	| NEW_TOKEN Type_name '(' ')' {$$=new NewObject($2);}
 	;
 	
-Special_name: THIS_TOKEN
-	| SUPER_TOKEN
+Type_name: Primitive_type  {$$=$1;}
+	| Identifier {$$=new ObjectType(*$1);
+					delete $1;}
 	;
 	
-New_allocation_expression: Plain_new_allocation_expression
-	| Identifier '.' Plain_new_allocation_expression
+Primitive_type: BOOLEAN_TOKEN  {$$= new BooleanType();}
+	| CHAR_TOKEN	{$$= new CharType();}
+	| INT_TOKEN	{$$=new IntType();}
+	| DOUBLE_TOKEN {$$=new DoubleType();}  
 	;
 	
-Plain_new_allocation_expression: Array_allocation_expression
-	| Class_allocation_expression
-	| Array_allocation_expression '{' '}'
-	| Class_allocation_expression '{' '}'														
-	| Array_allocation_expression '{' Array_initializers '}'
-	| Class_allocation_expression '{' Field_declarations '}'
+Argument_list: Expression  {$$=new SynList($1);}
+	| Argument_list ',' Expression {$$=$1;
+									$$->addNext($3);}
+	;
+
+Array_allocation_expression: 
+	 NEW_TOKEN Type_name Dimension_expression	{$$=new NewArray($2,$3);}							 		
+	| NEW_TOKEN Type_name Dim {$$=new NewArray($2,$3);}
+	;
+
+	
+Dimension_expression: '[' Expression ']' {$$= new Dimension($2);}
 	;
 	
-Class_allocation_expression: NEW_TOKEN Type_name '(' Argument_list ')' 
-	| NEW_TOKEN Type_name '(' ')'
+Dim: DIM_TOKEN {$$=new Dimension(new ConstIntST(0)); }
 	;
 	
-Type_name: Primitive_type
-	| Identifier 
+Complex_primary: '(' Expression ')'  {$$=$2;}
+	| Complex_primary_2 {$$=$1;}
 	;
 	
-Primitive_type: BOOLEAN_TOKEN
-	| CHAR_TOKEN
-	| INT_TOKEN
-	| DOUBLE_TOKEN
+Complex_primary_2: int_token  {$$=new ConstIntST($1);}
+	| double_token  {$$=new ConstDoubleST($1);}
+	| TRUE_TOKEN  {$$=new ConstBooleanST("true");}
+	| FALSE_TOKEN  {$$=new ConstBooleanST("false");}
+	| char_token   {$$=new ConstCharST($1);}
+	| Array_access {$$=$1;}
+	| Field_access  {$$=$1;}
+	| Method_call  {$$=$1;}
 	;
 	
-Argument_list: Expression
-	| Argument_list ',' Expression
+Array_access: ID_TOKEN '[' Expression ']'   {$$= new ArrayAccess(*$1,$3);
+											 delete	$1;}
+	//| Complex_primary '[' Expression ']'  {$$= new ArrayAccess(*$1,$3);}
 	;
 	
-Array_allocation_expression: NEW_TOKEN Type_name Dimension_expressions Dims
-	| NEW_TOKEN Type_name Dimension_expressions								 		
-	| NEW_TOKEN Type_name Dims
-	;
-	
-Dimension_expressions: Dimension_expression
-	| Dimension_expressions Dimension_expression
-	;
-	
-Dimension_expression: '[' Expression ']'
-	;
-	
-Dims: Dim
-	| Dims Dim
-	;
-	
-Dim: DIM_TOKEN
-	;
-	
-Complex_primary: '(' Expression ')' 
-	| Complex_primary_2
-	;
-	
-Complex_primary_2: int_token
-	| double_token
-	| TRUE_TOKEN
-	| FALSE_TOKEN
-	| char_token
-	| Array_access
-	| Field_access
-	| Method_call
-	;
-	
-Array_access: ID_TOKEN '[' Expression ']'
-	| Complex_primary '[' Expression ']' 
-	;
-	
-Field_access: Not_just_name '.' ID_TOKEN
-	| Real_postfix_expression '.' ID_TOKEN
-	| Identifier '.' THIS_TOKEN
+Field_access: Not_just_name '.' ID_TOKEN  {$$=new FieldAccess($1,new VariableST(*$3));
+											delete $3;}
+	| Real_postfix_expression '.' ID_TOKEN {$$=new FieldAccess($1,new VariableST(*$3));
+											delete $3;}
+	| Identifier '.' THIS_TOKEN {$$=new FieldAccess(new VariableST(*$1),new ThisST());
+								delete $1;}
 	;						
+
 				
-Method_call: Method_access '(' Argument_list ')'
-	| Method_access '('  ')'
+Method_call: Method_access '(' Argument_list ')' {$$=new MethodCall($1,$3);} 
+	| Method_access '('  ')'  {$$=new MethodCall($1);}
 	;											
 				
-Method_access: Complex_primary_2
-	| Special_name
-	| Identifier
+Method_access: Complex_primary_2  {$$=$1;}
+	| Special_name {$$=$1;}
+	| Identifier {$$=new VariableST(*$1);}
 	;		
-					
+/*					
 Primitive_type_expression: Primitive_type
 	| Primitive_type Dims
 	;
 	
 Class_type_expression: Identifier Dims
 	;
+*/	
+
 	
-Assignment_operator: '='
-	| MINUS_EQ_TOKEN
-	| PLUS_EQ_TOKEN
-	| MULT_EQ_TOKEN
-	| DIV_EQ_TOKEN
-	| MOD_EQ_TOKEN
-	;
-	
-Type_specifier: Type_name Dims
-	| Type_name 
+Type_specifier: Type_name Dim {$$=new ArrayType($1,0);}
+	| Type_name {$$=$1;}
 	;			
 		
-Identifier: ID_TOKEN 
-	| Identifier '.' ID_TOKEN
+Identifier: ID_TOKEN {$$ = $1;}
+	| Identifier '.' ID_TOKEN { $1->append(string("."));
+								$1->append(*$3);
+								$$=$1;	}
 	;		
 			
 %%
 
 int main(){
-	yydebug=1;
+	//yydebug=1;
 	yyparse();
+/*
+	map<string,vector<Method>>:: iterator tmp= spisak_metoda.begin();
+	while(tmp!=spisak_metoda.end()){
+		cout<<tmp->first<<endl;
+		for(unsigned i=0;i<tmp->second.size();i++)
+			cout<<tmp->second[i].getName()<<endl;
+		tmp++;	
+	}		
 	return 0;
-
+*/
 }

@@ -5,7 +5,12 @@
 //ideja je da imamo mapu <ime_klase, Hash_t> tj za svaku klasu da imamo posebnu tablicu simbola.
 //Prema toj mapi da pravimo sve ostalo.
 #include <string>
+#include <stack>
+#include <map>
 #include "TypeTree.hpp"
+
+using namespace std;
+
 
 
 class Bucket {
@@ -36,5 +41,7 @@ public:
 private:
 		int hash(string s);
 };
+
+
 
 #endif

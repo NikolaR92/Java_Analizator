@@ -1,0 +1,4690 @@
+Terminals unused in grammar
+
+   FINAL_TOKEN
+   FLOAT_TOKEN
+   float_token
+   NULL_TOKEN
+   STATIC_TOKEN
+
+
+Grammar
+
+    0 $accept: Compilation_unit $end
+
+    1 Compilation_unit: Package_statement Import_statements Type_declarations
+    2                 | Package_statement Import_statement
+    3                 | Package_statement Type_declarations
+    4                 | Import_statements Type_declarations
+    5                 | Package_statement
+    6                 | Import_statements
+    7                 | Type_declarations
+
+    8 Package_statement: PACKAGE_TOKEN Identifier ';'
+
+    9 Import_statements: Import_statement
+   10                  | Import_statements Import_statement
+
+   11 Import_statement: IMPORT_TOKEN Identifier ';'
+
+   12 Type_declarations: Type_declaration_sem
+   13                  | Type_declarations Type_declaration_sem
+
+   14 Type_declaration_sem: Type_declaration
+   15                     | Type_declaration ';'
+
+   16 Type_declaration: Class_definition '{' Field_declarations '}'
+   17                 | Class_definition '{' '}'
+
+   18 Class_definition: Modifier CLASS_TOKEN ID_TOKEN
+   19                 | Modifier CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN
+   20                 | CLASS_TOKEN ID_TOKEN
+   21                 | CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN
+
+   22 Modifier: PUBLIC_TOKEN
+   23         | PRIVATE_TOKEN
+   24         | PROTECTED_TOKEN
+
+   25 Field_declarations: Field_declaration_sem
+   26                   | Field_declarations Field_declaration_sem
+
+   27 Field_declaration_sem: Field_declaration
+   28                      | Field_declaration ';'
+
+   29 Field_declaration: Method_declaration
+   30                  | Constructor_declaration
+   31                  | Variable_declaration
+
+   32 Method_declaration: Type_specifier Method_definition Method_body
+   33                   | Modifier Type_specifier Method_definition Method_body
+
+   34 Method_definition: ID_TOKEN '(' Parameter_list ')'
+   35                  | ID_TOKEN '(' ')'
+
+   36 Parameter_list: Parameter
+   37               | Parameter_list ',' Parameter
+
+   38 Parameter: Type_specifier ID_TOKEN
+
+   39 Method_body: Statement_block
+   40            | ';'
+
+   41 Constructor_declaration: Modifier Constructor_declarator Statement_block
+   42                        | Constructor_declarator Statement_block
+
+   43 Constructor_declarator: ID_TOKEN '(' Parameter_list ')'
+   44                       | ID_TOKEN '(' ')'
+
+   45 Variable_declaration: Modifier Type_specifier Variable_declarators
+   46                     | Type_specifier Variable_declarators
+
+   47 Variable_declarators: Variable_declarator
+   48                     | Variable_declarators ',' Variable_declarator
+
+   49 Variable_declarator: ID_TOKEN
+   50                    | ID_TOKEN '=' Variable_initializer
+
+   51 Variable_initializer: Expression
+   52                     | '{' '}'
+   53                     | '{' Array_initializers '}'
+
+   54 Array_initializers: Variable_initializer
+   55                   | Array_initializers ',' Variable_initializer
+   56                   | Array_initializers ','
+
+   57 Statement_block: '{' Local_statements '}'
+   58                | '{' '}'
+
+   59 Local_statements: Statements
+   60                 | Local_statements Statements
+
+   61 Statements: Statement
+   62           | Variable_declaration_statement
+
+   63 Variable_declaration_statement: Type_specifier Variable_declarators ';'
+
+   64 Statement: Empty_statement
+   65          | Expression_statement ';'
+   66          | If_statement
+   67          | Loop_statement
+   68          | Return_statement
+   69          | Statement_block
+
+   70 Empty_statement: ';'
+
+   71 Expression_statement: Expression
+
+   72 If_statement: IF_TOKEN '(' Expression ')' Statement
+   73             | IF_TOKEN '(' Expression ')' Statement ELSE_TOKEN Statement
+
+   74 Loop_statement: WHILE_TOKEN '(' Expression ')' Statement
+   75               | DO_TOKEN Statement WHILE_TOKEN '(' Expression ')' ';'
+   76               | FOR_TOKEN '(' For_init For_expression For_incr ')' Statement
+   77               | FOR_TOKEN '(' For_init For_expression ')' Statement
+
+   78 For_init: Expression_statements ';'
+   79         | Variable_declaration_statement
+   80         | ';'
+
+   81 For_expression: Expression ';'
+   82               | ';'
+
+   83 For_incr: Expression_statements
+
+   84 Expression_statements: Expression_statement
+   85                      | Expression_statements ',' Expression_statement
+
+   86 Return_statement: RETURN_TOKEN Expression ';'
+
+   87 Expression: Assignment_expression
+
+   88 Assignment_expression: Conditional_or_expression
+   89                      | Unary_expression '=' Assignment_expression
+   90                      | Unary_expression MINUS_EQ_TOKEN Assignment_expression
+   91                      | Unary_expression PLUS_EQ_TOKEN Assignment_expression
+   92                      | Unary_expression MULT_EQ_TOKEN Assignment_expression
+   93                      | Unary_expression DIV_EQ_TOKEN Assignment_expression
+   94                      | Unary_expression MOD_EQ_TOKEN Assignment_expression
+
+   95 Conditional_or_expression: Conditional_and_expression
+   96                          | Conditional_or_expression OR_TOKEN Conditional_and_expression
+
+   97 Conditional_and_expression: Equality_expression
+   98                           | Conditional_and_expression AND_TOKEN Equality_expression
+
+   99 Equality_expression: Relational_expression
+  100                    | Equality_expression EQ_EQ_TOKEN Relational_expression
+  101                    | Equality_expression NOT_EQ_TOKEN Relational_expression
+
+  102 Relational_expression: Additive_expression
+  103                      | Relational_expression '<' Additive_expression
+  104                      | Relational_expression '>' Additive_expression
+  105                      | Relational_expression LT_EQ_TOKEN Additive_expression
+  106                      | Relational_expression GT_EQ_TOKEN Additive_expression
+
+  107 Additive_expression: Multiplicative_expression
+  108                    | Additive_expression '+' Multiplicative_expression
+  109                    | Additive_expression '-' Multiplicative_expression
+
+  110 Multiplicative_expression: Unary_expression
+  111                          | Multiplicative_expression '*' Unary_expression
+  112                          | Multiplicative_expression '/' Unary_expression
+  113                          | Multiplicative_expression '%' Unary_expression
+
+  114 Unary_expression: PLUS_PLUS_TOKEN Unary_expression
+  115                 | MINUS_MINUS_TOKEN Unary_expression
+  116                 | Postfix_expression
+
+  117 Postfix_expression: Primary_expression
+  118                   | Real_postfix_expression
+
+  119 Real_postfix_expression: Postfix_expression PLUS_PLUS_TOKEN
+  120                        | Postfix_expression MINUS_MINUS_TOKEN
+
+  121 Primary_expression: Identifier
+  122                   | Not_just_name
+
+  123 Not_just_name: Special_name
+  124              | New_allocation_expression
+  125              | Complex_primary
+
+  126 Special_name: THIS_TOKEN
+  127             | SUPER_TOKEN
+
+  128 New_allocation_expression: Plain_new_allocation_expression
+
+  129 Plain_new_allocation_expression: Array_allocation_expression
+  130                                | Class_allocation_expression
+  131                                | Array_allocation_expression '{' '}'
+  132                                | Array_allocation_expression '{' Array_initializers '}'
+
+  133 Class_allocation_expression: NEW_TOKEN Type_name '(' Argument_list ')'
+  134                            | NEW_TOKEN Type_name '(' ')'
+
+  135 Type_name: Primitive_type
+  136          | Identifier
+
+  137 Primitive_type: BOOLEAN_TOKEN
+  138               | CHAR_TOKEN
+  139               | INT_TOKEN
+  140               | DOUBLE_TOKEN
+
+  141 Argument_list: Expression
+  142              | Argument_list ',' Expression
+
+  143 Array_allocation_expression: NEW_TOKEN Type_name Dimension_expression
+  144                            | NEW_TOKEN Type_name Dim
+
+  145 Dimension_expression: '[' Expression ']'
+
+  146 Dim: DIM_TOKEN
+
+  147 Complex_primary: '(' Expression ')'
+  148                | Complex_primary_2
+
+  149 Complex_primary_2: int_token
+  150                  | double_token
+  151                  | TRUE_TOKEN
+  152                  | FALSE_TOKEN
+  153                  | char_token
+  154                  | Array_access
+  155                  | Field_access
+  156                  | Method_call
+
+  157 Array_access: ID_TOKEN '[' Expression ']'
+
+  158 Field_access: Not_just_name '.' ID_TOKEN
+  159             | Real_postfix_expression '.' ID_TOKEN
+  160             | Identifier '.' THIS_TOKEN
+
+  161 Method_call: Method_access '(' Argument_list ')'
+  162            | Method_access '(' ')'
+
+  163 Method_access: Complex_primary_2
+  164              | Special_name
+  165              | Identifier
+
+  166 Type_specifier: Type_name Dim
+  167               | Type_name
+
+  168 Identifier: ID_TOKEN
+  169           | Identifier '.' ID_TOKEN
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'%' (37) 113
+'(' (40) 34 35 43 44 72 73 74 75 76 77 133 134 147 161 162
+')' (41) 34 35 43 44 72 73 74 75 76 77 133 134 147 161 162
+'*' (42) 111
+'+' (43) 108
+',' (44) 37 48 55 56 85 142
+'-' (45) 109
+'.' (46) 158 159 160 169
+'/' (47) 112
+';' (59) 8 11 15 28 40 63 65 70 75 78 80 81 82 86
+'<' (60) 103
+'=' (61) 50 89
+'>' (62) 104
+'[' (91) 145 157
+']' (93) 145 157
+'{' (123) 16 17 52 53 57 58 131 132
+'}' (125) 16 17 52 53 57 58 131 132
+error (256)
+AND_TOKEN (258) 98
+BOOLEAN_TOKEN (259) 137
+CHAR_TOKEN (260) 138
+CLASS_TOKEN (261) 18 19 20 21
+char_token (262) 153
+DO_TOKEN (263) 75
+DOUBLE_TOKEN (264) 140
+DIV_EQ_TOKEN (265) 93
+DIM_TOKEN (266) 146
+double_token (267) 150
+ELSE_TOKEN (268) 73
+EXTEND_TOKEN (269) 19 21
+EQ_EQ_TOKEN (270) 100
+FINAL_TOKEN (271)
+FLOAT_TOKEN (272)
+FOR_TOKEN (273) 76 77
+float_token (274)
+GT_EQ_TOKEN (275) 106
+IF_TOKEN (276) 72 73
+IMPORT_TOKEN (277) 11
+INT_TOKEN (278) 139
+ID_TOKEN (279) 18 19 20 21 34 35 38 43 44 49 50 157 158 159 168 169
+int_token (280) 149
+MINUS_MINUS_TOKEN (281) 115 120
+MINUS_EQ_TOKEN (282) 90
+MULT_EQ_TOKEN (283) 92
+MOD_EQ_TOKEN (284) 94
+NEW_TOKEN (285) 133 134 143 144
+NULL_TOKEN (286)
+NOT_EQ_TOKEN (287) 101
+OR_TOKEN (288) 96
+PACKAGE_TOKEN (289) 8
+PLUS_PLUS_TOKEN (290) 114 119
+PUBLIC_TOKEN (291) 22
+PRIVATE_TOKEN (292) 23
+PROTECTED_TOKEN (293) 24
+PLUS_EQ_TOKEN (294) 91
+RETURN_TOKEN (295) 86
+SUPER_TOKEN (296) 127
+STATIC_TOKEN (297)
+THIS_TOKEN (298) 126 160
+TRUE_TOKEN (299) 151
+FALSE_TOKEN (300) 152
+WHILE_TOKEN (301) 74 75
+LT_EQ_TOKEN (302) 105
+"then" (303)
+
+
+Nonterminals, with rules where they appear
+
+$accept (66)
+    on left: 0
+Compilation_unit (67)
+    on left: 1 2 3 4 5 6 7, on right: 0
+Package_statement (68)
+    on left: 8, on right: 1 2 3 5
+Import_statements (69)
+    on left: 9 10, on right: 1 4 6 10
+Import_statement (70)
+    on left: 11, on right: 2 9 10
+Type_declarations (71)
+    on left: 12 13, on right: 1 3 4 7 13
+Type_declaration_sem (72)
+    on left: 14 15, on right: 12 13
+Type_declaration (73)
+    on left: 16 17, on right: 14 15
+Class_definition (74)
+    on left: 18 19 20 21, on right: 16 17
+Modifier (75)
+    on left: 22 23 24, on right: 18 19 33 41 45
+Field_declarations (76)
+    on left: 25 26, on right: 16 26
+Field_declaration_sem (77)
+    on left: 27 28, on right: 25 26
+Field_declaration (78)
+    on left: 29 30 31, on right: 27 28
+Method_declaration (79)
+    on left: 32 33, on right: 29
+Method_definition (80)
+    on left: 34 35, on right: 32 33
+Parameter_list (81)
+    on left: 36 37, on right: 34 37 43
+Parameter (82)
+    on left: 38, on right: 36 37
+Method_body (83)
+    on left: 39 40, on right: 32 33
+Constructor_declaration (84)
+    on left: 41 42, on right: 30
+Constructor_declarator (85)
+    on left: 43 44, on right: 41 42
+Variable_declaration (86)
+    on left: 45 46, on right: 31
+Variable_declarators (87)
+    on left: 47 48, on right: 45 46 48 63
+Variable_declarator (88)
+    on left: 49 50, on right: 47 48
+Variable_initializer (89)
+    on left: 51 52 53, on right: 50 54 55
+Array_initializers (90)
+    on left: 54 55 56, on right: 53 55 56 132
+Statement_block (91)
+    on left: 57 58, on right: 39 41 42 69
+Local_statements (92)
+    on left: 59 60, on right: 57 60
+Statements (93)
+    on left: 61 62, on right: 59 60
+Variable_declaration_statement (94)
+    on left: 63, on right: 62 79
+Statement (95)
+    on left: 64 65 66 67 68 69, on right: 61 72 73 74 75 76 77
+Empty_statement (96)
+    on left: 70, on right: 64
+Expression_statement (97)
+    on left: 71, on right: 65 84 85
+If_statement (98)
+    on left: 72 73, on right: 66
+Loop_statement (99)
+    on left: 74 75 76 77, on right: 67
+For_init (100)
+    on left: 78 79 80, on right: 76 77
+For_expression (101)
+    on left: 81 82, on right: 76 77
+For_incr (102)
+    on left: 83, on right: 76
+Expression_statements (103)
+    on left: 84 85, on right: 78 83 85
+Return_statement (104)
+    on left: 86, on right: 68
+Expression (105)
+    on left: 87, on right: 51 71 72 73 74 75 81 86 141 142 145 147
+    157
+Assignment_expression (106)
+    on left: 88 89 90 91 92 93 94, on right: 87 89 90 91 92 93 94
+Conditional_or_expression (107)
+    on left: 95 96, on right: 88 96
+Conditional_and_expression (108)
+    on left: 97 98, on right: 95 96 98
+Equality_expression (109)
+    on left: 99 100 101, on right: 97 98 100 101
+Relational_expression (110)
+    on left: 102 103 104 105 106, on right: 99 100 101 103 104 105
+    106
+Additive_expression (111)
+    on left: 107 108 109, on right: 102 103 104 105 106 108 109
+Multiplicative_expression (112)
+    on left: 110 111 112 113, on right: 107 108 109 111 112 113
+Unary_expression (113)
+    on left: 114 115 116, on right: 89 90 91 92 93 94 110 111 112 113
+    114 115
+Postfix_expression (114)
+    on left: 117 118, on right: 116 119 120
+Real_postfix_expression (115)
+    on left: 119 120, on right: 118 159
+Primary_expression (116)
+    on left: 121 122, on right: 117
+Not_just_name (117)
+    on left: 123 124 125, on right: 122 158
+Special_name (118)
+    on left: 126 127, on right: 123 164
+New_allocation_expression (119)
+    on left: 128, on right: 124
+Plain_new_allocation_expression (120)
+    on left: 129 130 131 132, on right: 128
+Class_allocation_expression (121)
+    on left: 133 134, on right: 130
+Type_name (122)
+    on left: 135 136, on right: 133 134 143 144 166 167
+Primitive_type (123)
+    on left: 137 138 139 140, on right: 135
+Argument_list (124)
+    on left: 141 142, on right: 133 142 161
+Array_allocation_expression (125)
+    on left: 143 144, on right: 129 131 132
+Dimension_expression (126)
+    on left: 145, on right: 143
+Dim (127)
+    on left: 146, on right: 144 166
+Complex_primary (128)
+    on left: 147 148, on right: 125
+Complex_primary_2 (129)
+    on left: 149 150 151 152 153 154 155 156, on right: 148 163
+Array_access (130)
+    on left: 157, on right: 154
+Field_access (131)
+    on left: 158 159 160, on right: 155
+Method_call (132)
+    on left: 161 162, on right: 156
+Method_access (133)
+    on left: 163 164 165, on right: 161 162
+Type_specifier (134)
+    on left: 166 167, on right: 32 33 38 45 46 63
+Identifier (135)
+    on left: 168 169, on right: 8 11 121 136 160 165 169
+
+
+State 0
+
+    0 $accept: . Compilation_unit $end
+
+    CLASS_TOKEN      shift, and go to state 1
+    IMPORT_TOKEN     shift, and go to state 2
+    PACKAGE_TOKEN    shift, and go to state 3
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+
+    Compilation_unit      go to state 7
+    Package_statement     go to state 8
+    Import_statements     go to state 9
+    Import_statement      go to state 10
+    Type_declarations     go to state 11
+    Type_declaration_sem  go to state 12
+    Type_declaration      go to state 13
+    Class_definition      go to state 14
+    Modifier              go to state 15
+
+
+State 1
+
+   20 Class_definition: CLASS_TOKEN . ID_TOKEN
+   21                 | CLASS_TOKEN . ID_TOKEN EXTEND_TOKEN ID_TOKEN
+
+    ID_TOKEN  shift, and go to state 16
+
+
+State 2
+
+   11 Import_statement: IMPORT_TOKEN . Identifier ';'
+
+    ID_TOKEN  shift, and go to state 17
+
+    Identifier  go to state 18
+
+
+State 3
+
+    8 Package_statement: PACKAGE_TOKEN . Identifier ';'
+
+    ID_TOKEN  shift, and go to state 17
+
+    Identifier  go to state 19
+
+
+State 4
+
+   22 Modifier: PUBLIC_TOKEN .
+
+    $default  reduce using rule 22 (Modifier)
+
+
+State 5
+
+   23 Modifier: PRIVATE_TOKEN .
+
+    $default  reduce using rule 23 (Modifier)
+
+
+State 6
+
+   24 Modifier: PROTECTED_TOKEN .
+
+    $default  reduce using rule 24 (Modifier)
+
+
+State 7
+
+    0 $accept: Compilation_unit . $end
+
+    $end  shift, and go to state 20
+
+
+State 8
+
+    1 Compilation_unit: Package_statement . Import_statements Type_declarations
+    2                 | Package_statement . Import_statement
+    3                 | Package_statement . Type_declarations
+    5                 | Package_statement .
+
+    CLASS_TOKEN      shift, and go to state 1
+    IMPORT_TOKEN     shift, and go to state 2
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+
+    $default  reduce using rule 5 (Compilation_unit)
+
+    Import_statements     go to state 21
+    Import_statement      go to state 22
+    Type_declarations     go to state 23
+    Type_declaration_sem  go to state 12
+    Type_declaration      go to state 13
+    Class_definition      go to state 14
+    Modifier              go to state 15
+
+
+State 9
+
+    4 Compilation_unit: Import_statements . Type_declarations
+    6                 | Import_statements .
+   10 Import_statements: Import_statements . Import_statement
+
+    CLASS_TOKEN      shift, and go to state 1
+    IMPORT_TOKEN     shift, and go to state 2
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+
+    $default  reduce using rule 6 (Compilation_unit)
+
+    Import_statement      go to state 24
+    Type_declarations     go to state 25
+    Type_declaration_sem  go to state 12
+    Type_declaration      go to state 13
+    Class_definition      go to state 14
+    Modifier              go to state 15
+
+
+State 10
+
+    9 Import_statements: Import_statement .
+
+    $default  reduce using rule 9 (Import_statements)
+
+
+State 11
+
+    7 Compilation_unit: Type_declarations .
+   13 Type_declarations: Type_declarations . Type_declaration_sem
+
+    CLASS_TOKEN      shift, and go to state 1
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+
+    $default  reduce using rule 7 (Compilation_unit)
+
+    Type_declaration_sem  go to state 26
+    Type_declaration      go to state 13
+    Class_definition      go to state 14
+    Modifier              go to state 15
+
+
+State 12
+
+   12 Type_declarations: Type_declaration_sem .
+
+    $default  reduce using rule 12 (Type_declarations)
+
+
+State 13
+
+   14 Type_declaration_sem: Type_declaration .
+   15                     | Type_declaration . ';'
+
+    ';'  shift, and go to state 27
+
+    $default  reduce using rule 14 (Type_declaration_sem)
+
+
+State 14
+
+   16 Type_declaration: Class_definition . '{' Field_declarations '}'
+   17                 | Class_definition . '{' '}'
+
+    '{'  shift, and go to state 28
+
+
+State 15
+
+   18 Class_definition: Modifier . CLASS_TOKEN ID_TOKEN
+   19                 | Modifier . CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN
+
+    CLASS_TOKEN  shift, and go to state 29
+
+
+State 16
+
+   20 Class_definition: CLASS_TOKEN ID_TOKEN .
+   21                 | CLASS_TOKEN ID_TOKEN . EXTEND_TOKEN ID_TOKEN
+
+    EXTEND_TOKEN  shift, and go to state 30
+
+    $default  reduce using rule 20 (Class_definition)
+
+
+State 17
+
+  168 Identifier: ID_TOKEN .
+
+    $default  reduce using rule 168 (Identifier)
+
+
+State 18
+
+   11 Import_statement: IMPORT_TOKEN Identifier . ';'
+  169 Identifier: Identifier . '.' ID_TOKEN
+
+    '.'  shift, and go to state 31
+    ';'  shift, and go to state 32
+
+
+State 19
+
+    8 Package_statement: PACKAGE_TOKEN Identifier . ';'
+  169 Identifier: Identifier . '.' ID_TOKEN
+
+    '.'  shift, and go to state 31
+    ';'  shift, and go to state 33
+
+
+State 20
+
+    0 $accept: Compilation_unit $end .
+
+    $default  accept
+
+
+State 21
+
+    1 Compilation_unit: Package_statement Import_statements . Type_declarations
+   10 Import_statements: Import_statements . Import_statement
+
+    CLASS_TOKEN      shift, and go to state 1
+    IMPORT_TOKEN     shift, and go to state 2
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+
+    Import_statement      go to state 24
+    Type_declarations     go to state 34
+    Type_declaration_sem  go to state 12
+    Type_declaration      go to state 13
+    Class_definition      go to state 14
+    Modifier              go to state 15
+
+
+State 22
+
+    2 Compilation_unit: Package_statement Import_statement .
+    9 Import_statements: Import_statement .
+
+    $end      reduce using rule 2 (Compilation_unit)
+    $default  reduce using rule 9 (Import_statements)
+
+
+State 23
+
+    3 Compilation_unit: Package_statement Type_declarations .
+   13 Type_declarations: Type_declarations . Type_declaration_sem
+
+    CLASS_TOKEN      shift, and go to state 1
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+
+    $default  reduce using rule 3 (Compilation_unit)
+
+    Type_declaration_sem  go to state 26
+    Type_declaration      go to state 13
+    Class_definition      go to state 14
+    Modifier              go to state 15
+
+
+State 24
+
+   10 Import_statements: Import_statements Import_statement .
+
+    $default  reduce using rule 10 (Import_statements)
+
+
+State 25
+
+    4 Compilation_unit: Import_statements Type_declarations .
+   13 Type_declarations: Type_declarations . Type_declaration_sem
+
+    CLASS_TOKEN      shift, and go to state 1
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+
+    $default  reduce using rule 4 (Compilation_unit)
+
+    Type_declaration_sem  go to state 26
+    Type_declaration      go to state 13
+    Class_definition      go to state 14
+    Modifier              go to state 15
+
+
+State 26
+
+   13 Type_declarations: Type_declarations Type_declaration_sem .
+
+    $default  reduce using rule 13 (Type_declarations)
+
+
+State 27
+
+   15 Type_declaration_sem: Type_declaration ';' .
+
+    $default  reduce using rule 15 (Type_declaration_sem)
+
+
+State 28
+
+   16 Type_declaration: Class_definition '{' . Field_declarations '}'
+   17                 | Class_definition '{' . '}'
+
+    BOOLEAN_TOKEN    shift, and go to state 35
+    CHAR_TOKEN       shift, and go to state 36
+    DOUBLE_TOKEN     shift, and go to state 37
+    INT_TOKEN        shift, and go to state 38
+    ID_TOKEN         shift, and go to state 39
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+    '}'              shift, and go to state 40
+
+    Modifier                 go to state 41
+    Field_declarations       go to state 42
+    Field_declaration_sem    go to state 43
+    Field_declaration        go to state 44
+    Method_declaration       go to state 45
+    Constructor_declaration  go to state 46
+    Constructor_declarator   go to state 47
+    Variable_declaration     go to state 48
+    Type_name                go to state 49
+    Primitive_type           go to state 50
+    Type_specifier           go to state 51
+    Identifier               go to state 52
+
+
+State 29
+
+   18 Class_definition: Modifier CLASS_TOKEN . ID_TOKEN
+   19                 | Modifier CLASS_TOKEN . ID_TOKEN EXTEND_TOKEN ID_TOKEN
+
+    ID_TOKEN  shift, and go to state 53
+
+
+State 30
+
+   21 Class_definition: CLASS_TOKEN ID_TOKEN EXTEND_TOKEN . ID_TOKEN
+
+    ID_TOKEN  shift, and go to state 54
+
+
+State 31
+
+  169 Identifier: Identifier '.' . ID_TOKEN
+
+    ID_TOKEN  shift, and go to state 55
+
+
+State 32
+
+   11 Import_statement: IMPORT_TOKEN Identifier ';' .
+
+    $default  reduce using rule 11 (Import_statement)
+
+
+State 33
+
+    8 Package_statement: PACKAGE_TOKEN Identifier ';' .
+
+    $default  reduce using rule 8 (Package_statement)
+
+
+State 34
+
+    1 Compilation_unit: Package_statement Import_statements Type_declarations .
+   13 Type_declarations: Type_declarations . Type_declaration_sem
+
+    CLASS_TOKEN      shift, and go to state 1
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+
+    $default  reduce using rule 1 (Compilation_unit)
+
+    Type_declaration_sem  go to state 26
+    Type_declaration      go to state 13
+    Class_definition      go to state 14
+    Modifier              go to state 15
+
+
+State 35
+
+  137 Primitive_type: BOOLEAN_TOKEN .
+
+    $default  reduce using rule 137 (Primitive_type)
+
+
+State 36
+
+  138 Primitive_type: CHAR_TOKEN .
+
+    $default  reduce using rule 138 (Primitive_type)
+
+
+State 37
+
+  140 Primitive_type: DOUBLE_TOKEN .
+
+    $default  reduce using rule 140 (Primitive_type)
+
+
+State 38
+
+  139 Primitive_type: INT_TOKEN .
+
+    $default  reduce using rule 139 (Primitive_type)
+
+
+State 39
+
+   43 Constructor_declarator: ID_TOKEN . '(' Parameter_list ')'
+   44                       | ID_TOKEN . '(' ')'
+  168 Identifier: ID_TOKEN .
+
+    '('  shift, and go to state 56
+
+    $default  reduce using rule 168 (Identifier)
+
+
+State 40
+
+   17 Type_declaration: Class_definition '{' '}' .
+
+    $default  reduce using rule 17 (Type_declaration)
+
+
+State 41
+
+   33 Method_declaration: Modifier . Type_specifier Method_definition Method_body
+   41 Constructor_declaration: Modifier . Constructor_declarator Statement_block
+   45 Variable_declaration: Modifier . Type_specifier Variable_declarators
+
+    BOOLEAN_TOKEN  shift, and go to state 35
+    CHAR_TOKEN     shift, and go to state 36
+    DOUBLE_TOKEN   shift, and go to state 37
+    INT_TOKEN      shift, and go to state 38
+    ID_TOKEN       shift, and go to state 39
+
+    Constructor_declarator  go to state 57
+    Type_name               go to state 49
+    Primitive_type          go to state 50
+    Type_specifier          go to state 58
+    Identifier              go to state 52
+
+
+State 42
+
+   16 Type_declaration: Class_definition '{' Field_declarations . '}'
+   26 Field_declarations: Field_declarations . Field_declaration_sem
+
+    BOOLEAN_TOKEN    shift, and go to state 35
+    CHAR_TOKEN       shift, and go to state 36
+    DOUBLE_TOKEN     shift, and go to state 37
+    INT_TOKEN        shift, and go to state 38
+    ID_TOKEN         shift, and go to state 39
+    PUBLIC_TOKEN     shift, and go to state 4
+    PRIVATE_TOKEN    shift, and go to state 5
+    PROTECTED_TOKEN  shift, and go to state 6
+    '}'              shift, and go to state 59
+
+    Modifier                 go to state 41
+    Field_declaration_sem    go to state 60
+    Field_declaration        go to state 44
+    Method_declaration       go to state 45
+    Constructor_declaration  go to state 46
+    Constructor_declarator   go to state 47
+    Variable_declaration     go to state 48
+    Type_name                go to state 49
+    Primitive_type           go to state 50
+    Type_specifier           go to state 51
+    Identifier               go to state 52
+
+
+State 43
+
+   25 Field_declarations: Field_declaration_sem .
+
+    $default  reduce using rule 25 (Field_declarations)
+
+
+State 44
+
+   27 Field_declaration_sem: Field_declaration .
+   28                      | Field_declaration . ';'
+
+    ';'  shift, and go to state 61
+
+    $default  reduce using rule 27 (Field_declaration_sem)
+
+
+State 45
+
+   29 Field_declaration: Method_declaration .
+
+    $default  reduce using rule 29 (Field_declaration)
+
+
+State 46
+
+   30 Field_declaration: Constructor_declaration .
+
+    $default  reduce using rule 30 (Field_declaration)
+
+
+State 47
+
+   42 Constructor_declaration: Constructor_declarator . Statement_block
+
+    '{'  shift, and go to state 62
+
+    Statement_block  go to state 63
+
+
+State 48
+
+   31 Field_declaration: Variable_declaration .
+
+    $default  reduce using rule 31 (Field_declaration)
+
+
+State 49
+
+  166 Type_specifier: Type_name . Dim
+  167               | Type_name .
+
+    DIM_TOKEN  shift, and go to state 64
+
+    $default  reduce using rule 167 (Type_specifier)
+
+    Dim  go to state 65
+
+
+State 50
+
+  135 Type_name: Primitive_type .
+
+    $default  reduce using rule 135 (Type_name)
+
+
+State 51
+
+   32 Method_declaration: Type_specifier . Method_definition Method_body
+   46 Variable_declaration: Type_specifier . Variable_declarators
+
+    ID_TOKEN  shift, and go to state 66
+
+    Method_definition     go to state 67
+    Variable_declarators  go to state 68
+    Variable_declarator   go to state 69
+
+
+State 52
+
+  136 Type_name: Identifier .
+  169 Identifier: Identifier . '.' ID_TOKEN
+
+    '.'  shift, and go to state 31
+
+    $default  reduce using rule 136 (Type_name)
+
+
+State 53
+
+   18 Class_definition: Modifier CLASS_TOKEN ID_TOKEN .
+   19                 | Modifier CLASS_TOKEN ID_TOKEN . EXTEND_TOKEN ID_TOKEN
+
+    EXTEND_TOKEN  shift, and go to state 70
+
+    $default  reduce using rule 18 (Class_definition)
+
+
+State 54
+
+   21 Class_definition: CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN .
+
+    $default  reduce using rule 21 (Class_definition)
+
+
+State 55
+
+  169 Identifier: Identifier '.' ID_TOKEN .
+
+    $default  reduce using rule 169 (Identifier)
+
+
+State 56
+
+   43 Constructor_declarator: ID_TOKEN '(' . Parameter_list ')'
+   44                       | ID_TOKEN '(' . ')'
+
+    BOOLEAN_TOKEN  shift, and go to state 35
+    CHAR_TOKEN     shift, and go to state 36
+    DOUBLE_TOKEN   shift, and go to state 37
+    INT_TOKEN      shift, and go to state 38
+    ID_TOKEN       shift, and go to state 17
+    ')'            shift, and go to state 71
+
+    Parameter_list  go to state 72
+    Parameter       go to state 73
+    Type_name       go to state 49
+    Primitive_type  go to state 50
+    Type_specifier  go to state 74
+    Identifier      go to state 52
+
+
+State 57
+
+   41 Constructor_declaration: Modifier Constructor_declarator . Statement_block
+
+    '{'  shift, and go to state 62
+
+    Statement_block  go to state 75
+
+
+State 58
+
+   33 Method_declaration: Modifier Type_specifier . Method_definition Method_body
+   45 Variable_declaration: Modifier Type_specifier . Variable_declarators
+
+    ID_TOKEN  shift, and go to state 66
+
+    Method_definition     go to state 76
+    Variable_declarators  go to state 77
+    Variable_declarator   go to state 69
+
+
+State 59
+
+   16 Type_declaration: Class_definition '{' Field_declarations '}' .
+
+    $default  reduce using rule 16 (Type_declaration)
+
+
+State 60
+
+   26 Field_declarations: Field_declarations Field_declaration_sem .
+
+    $default  reduce using rule 26 (Field_declarations)
+
+
+State 61
+
+   28 Field_declaration_sem: Field_declaration ';' .
+
+    $default  reduce using rule 28 (Field_declaration_sem)
+
+
+State 62
+
+   57 Statement_block: '{' . Local_statements '}'
+   58                | '{' . '}'
+
+    BOOLEAN_TOKEN      shift, and go to state 35
+    CHAR_TOKEN         shift, and go to state 36
+    char_token         shift, and go to state 78
+    DO_TOKEN           shift, and go to state 79
+    DOUBLE_TOKEN       shift, and go to state 37
+    double_token       shift, and go to state 80
+    FOR_TOKEN          shift, and go to state 81
+    IF_TOKEN           shift, and go to state 82
+    INT_TOKEN          shift, and go to state 38
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    RETURN_TOKEN       shift, and go to state 88
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    WHILE_TOKEN        shift, and go to state 93
+    ';'                shift, and go to state 94
+    '{'                shift, and go to state 62
+    '}'                shift, and go to state 95
+    '('                shift, and go to state 96
+
+    Statement_block                  go to state 97
+    Local_statements                 go to state 98
+    Statements                       go to state 99
+    Variable_declaration_statement   go to state 100
+    Statement                        go to state 101
+    Empty_statement                  go to state 102
+    Expression_statement             go to state 103
+    If_statement                     go to state 104
+    Loop_statement                   go to state 105
+    Return_statement                 go to state 106
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Type_name                        go to state 49
+    Primitive_type                   go to state 50
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Type_specifier                   go to state 131
+    Identifier                       go to state 132
+
+
+State 63
+
+   42 Constructor_declaration: Constructor_declarator Statement_block .
+
+    $default  reduce using rule 42 (Constructor_declaration)
+
+
+State 64
+
+  146 Dim: DIM_TOKEN .
+
+    $default  reduce using rule 146 (Dim)
+
+
+State 65
+
+  166 Type_specifier: Type_name Dim .
+
+    $default  reduce using rule 166 (Type_specifier)
+
+
+State 66
+
+   34 Method_definition: ID_TOKEN . '(' Parameter_list ')'
+   35                  | ID_TOKEN . '(' ')'
+   49 Variable_declarator: ID_TOKEN .
+   50                    | ID_TOKEN . '=' Variable_initializer
+
+    '='  shift, and go to state 133
+    '('  shift, and go to state 134
+
+    $default  reduce using rule 49 (Variable_declarator)
+
+
+State 67
+
+   32 Method_declaration: Type_specifier Method_definition . Method_body
+
+    ';'  shift, and go to state 135
+    '{'  shift, and go to state 62
+
+    Method_body      go to state 136
+    Statement_block  go to state 137
+
+
+State 68
+
+   46 Variable_declaration: Type_specifier Variable_declarators .
+   48 Variable_declarators: Variable_declarators . ',' Variable_declarator
+
+    ','  shift, and go to state 138
+
+    $default  reduce using rule 46 (Variable_declaration)
+
+
+State 69
+
+   47 Variable_declarators: Variable_declarator .
+
+    $default  reduce using rule 47 (Variable_declarators)
+
+
+State 70
+
+   19 Class_definition: Modifier CLASS_TOKEN ID_TOKEN EXTEND_TOKEN . ID_TOKEN
+
+    ID_TOKEN  shift, and go to state 139
+
+
+State 71
+
+   44 Constructor_declarator: ID_TOKEN '(' ')' .
+
+    $default  reduce using rule 44 (Constructor_declarator)
+
+
+State 72
+
+   37 Parameter_list: Parameter_list . ',' Parameter
+   43 Constructor_declarator: ID_TOKEN '(' Parameter_list . ')'
+
+    ')'  shift, and go to state 140
+    ','  shift, and go to state 141
+
+
+State 73
+
+   36 Parameter_list: Parameter .
+
+    $default  reduce using rule 36 (Parameter_list)
+
+
+State 74
+
+   38 Parameter: Type_specifier . ID_TOKEN
+
+    ID_TOKEN  shift, and go to state 142
+
+
+State 75
+
+   41 Constructor_declaration: Modifier Constructor_declarator Statement_block .
+
+    $default  reduce using rule 41 (Constructor_declaration)
+
+
+State 76
+
+   33 Method_declaration: Modifier Type_specifier Method_definition . Method_body
+
+    ';'  shift, and go to state 135
+    '{'  shift, and go to state 62
+
+    Method_body      go to state 143
+    Statement_block  go to state 137
+
+
+State 77
+
+   45 Variable_declaration: Modifier Type_specifier Variable_declarators .
+   48 Variable_declarators: Variable_declarators . ',' Variable_declarator
+
+    ','  shift, and go to state 138
+
+    $default  reduce using rule 45 (Variable_declaration)
+
+
+State 78
+
+  153 Complex_primary_2: char_token .
+
+    $default  reduce using rule 153 (Complex_primary_2)
+
+
+State 79
+
+   75 Loop_statement: DO_TOKEN . Statement WHILE_TOKEN '(' Expression ')' ';'
+
+    char_token         shift, and go to state 78
+    DO_TOKEN           shift, and go to state 79
+    double_token       shift, and go to state 80
+    FOR_TOKEN          shift, and go to state 81
+    IF_TOKEN           shift, and go to state 82
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    RETURN_TOKEN       shift, and go to state 88
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    WHILE_TOKEN        shift, and go to state 93
+    ';'                shift, and go to state 94
+    '{'                shift, and go to state 62
+    '('                shift, and go to state 96
+
+    Statement_block                  go to state 97
+    Statement                        go to state 144
+    Empty_statement                  go to state 102
+    Expression_statement             go to state 103
+    If_statement                     go to state 104
+    Loop_statement                   go to state 105
+    Return_statement                 go to state 106
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 80
+
+  150 Complex_primary_2: double_token .
+
+    $default  reduce using rule 150 (Complex_primary_2)
+
+
+State 81
+
+   76 Loop_statement: FOR_TOKEN . '(' For_init For_expression For_incr ')' Statement
+   77               | FOR_TOKEN . '(' For_init For_expression ')' Statement
+
+    '('  shift, and go to state 146
+
+
+State 82
+
+   72 If_statement: IF_TOKEN . '(' Expression ')' Statement
+   73             | IF_TOKEN . '(' Expression ')' Statement ELSE_TOKEN Statement
+
+    '('  shift, and go to state 147
+
+
+State 83
+
+  157 Array_access: ID_TOKEN . '[' Expression ']'
+  168 Identifier: ID_TOKEN .
+
+    '['  shift, and go to state 148
+
+    $default  reduce using rule 168 (Identifier)
+
+
+State 84
+
+  149 Complex_primary_2: int_token .
+
+    $default  reduce using rule 149 (Complex_primary_2)
+
+
+State 85
+
+  115 Unary_expression: MINUS_MINUS_TOKEN . Unary_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Unary_expression                 go to state 149
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 86
+
+  133 Class_allocation_expression: NEW_TOKEN . Type_name '(' Argument_list ')'
+  134                            | NEW_TOKEN . Type_name '(' ')'
+  143 Array_allocation_expression: NEW_TOKEN . Type_name Dimension_expression
+  144                            | NEW_TOKEN . Type_name Dim
+
+    BOOLEAN_TOKEN  shift, and go to state 35
+    CHAR_TOKEN     shift, and go to state 36
+    DOUBLE_TOKEN   shift, and go to state 37
+    INT_TOKEN      shift, and go to state 38
+    ID_TOKEN       shift, and go to state 17
+
+    Type_name       go to state 150
+    Primitive_type  go to state 50
+    Identifier      go to state 52
+
+
+State 87
+
+  114 Unary_expression: PLUS_PLUS_TOKEN . Unary_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Unary_expression                 go to state 151
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 88
+
+   86 Return_statement: RETURN_TOKEN . Expression ';'
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Expression                       go to state 152
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 89
+
+  127 Special_name: SUPER_TOKEN .
+
+    $default  reduce using rule 127 (Special_name)
+
+
+State 90
+
+  126 Special_name: THIS_TOKEN .
+
+    $default  reduce using rule 126 (Special_name)
+
+
+State 91
+
+  151 Complex_primary_2: TRUE_TOKEN .
+
+    $default  reduce using rule 151 (Complex_primary_2)
+
+
+State 92
+
+  152 Complex_primary_2: FALSE_TOKEN .
+
+    $default  reduce using rule 152 (Complex_primary_2)
+
+
+State 93
+
+   74 Loop_statement: WHILE_TOKEN . '(' Expression ')' Statement
+
+    '('  shift, and go to state 153
+
+
+State 94
+
+   70 Empty_statement: ';' .
+
+    $default  reduce using rule 70 (Empty_statement)
+
+
+State 95
+
+   58 Statement_block: '{' '}' .
+
+    $default  reduce using rule 58 (Statement_block)
+
+
+State 96
+
+  147 Complex_primary: '(' . Expression ')'
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Expression                       go to state 154
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 97
+
+   69 Statement: Statement_block .
+
+    $default  reduce using rule 69 (Statement)
+
+
+State 98
+
+   57 Statement_block: '{' Local_statements . '}'
+   60 Local_statements: Local_statements . Statements
+
+    BOOLEAN_TOKEN      shift, and go to state 35
+    CHAR_TOKEN         shift, and go to state 36
+    char_token         shift, and go to state 78
+    DO_TOKEN           shift, and go to state 79
+    DOUBLE_TOKEN       shift, and go to state 37
+    double_token       shift, and go to state 80
+    FOR_TOKEN          shift, and go to state 81
+    IF_TOKEN           shift, and go to state 82
+    INT_TOKEN          shift, and go to state 38
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    RETURN_TOKEN       shift, and go to state 88
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    WHILE_TOKEN        shift, and go to state 93
+    ';'                shift, and go to state 94
+    '{'                shift, and go to state 62
+    '}'                shift, and go to state 155
+    '('                shift, and go to state 96
+
+    Statement_block                  go to state 97
+    Statements                       go to state 156
+    Variable_declaration_statement   go to state 100
+    Statement                        go to state 101
+    Empty_statement                  go to state 102
+    Expression_statement             go to state 103
+    If_statement                     go to state 104
+    Loop_statement                   go to state 105
+    Return_statement                 go to state 106
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Type_name                        go to state 49
+    Primitive_type                   go to state 50
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Type_specifier                   go to state 131
+    Identifier                       go to state 132
+
+
+State 99
+
+   59 Local_statements: Statements .
+
+    $default  reduce using rule 59 (Local_statements)
+
+
+State 100
+
+   62 Statements: Variable_declaration_statement .
+
+    $default  reduce using rule 62 (Statements)
+
+
+State 101
+
+   61 Statements: Statement .
+
+    $default  reduce using rule 61 (Statements)
+
+
+State 102
+
+   64 Statement: Empty_statement .
+
+    $default  reduce using rule 64 (Statement)
+
+
+State 103
+
+   65 Statement: Expression_statement . ';'
+
+    ';'  shift, and go to state 157
+
+
+State 104
+
+   66 Statement: If_statement .
+
+    $default  reduce using rule 66 (Statement)
+
+
+State 105
+
+   67 Statement: Loop_statement .
+
+    $default  reduce using rule 67 (Statement)
+
+
+State 106
+
+   68 Statement: Return_statement .
+
+    $default  reduce using rule 68 (Statement)
+
+
+State 107
+
+   71 Expression_statement: Expression .
+
+    $default  reduce using rule 71 (Expression_statement)
+
+
+State 108
+
+   87 Expression: Assignment_expression .
+
+    $default  reduce using rule 87 (Expression)
+
+
+State 109
+
+   88 Assignment_expression: Conditional_or_expression .
+   96 Conditional_or_expression: Conditional_or_expression . OR_TOKEN Conditional_and_expression
+
+    OR_TOKEN  shift, and go to state 158
+
+    $default  reduce using rule 88 (Assignment_expression)
+
+
+State 110
+
+   95 Conditional_or_expression: Conditional_and_expression .
+   98 Conditional_and_expression: Conditional_and_expression . AND_TOKEN Equality_expression
+
+    AND_TOKEN  shift, and go to state 159
+
+    $default  reduce using rule 95 (Conditional_or_expression)
+
+
+State 111
+
+   97 Conditional_and_expression: Equality_expression .
+  100 Equality_expression: Equality_expression . EQ_EQ_TOKEN Relational_expression
+  101                    | Equality_expression . NOT_EQ_TOKEN Relational_expression
+
+    EQ_EQ_TOKEN   shift, and go to state 160
+    NOT_EQ_TOKEN  shift, and go to state 161
+
+    $default  reduce using rule 97 (Conditional_and_expression)
+
+
+State 112
+
+   99 Equality_expression: Relational_expression .
+  103 Relational_expression: Relational_expression . '<' Additive_expression
+  104                      | Relational_expression . '>' Additive_expression
+  105                      | Relational_expression . LT_EQ_TOKEN Additive_expression
+  106                      | Relational_expression . GT_EQ_TOKEN Additive_expression
+
+    GT_EQ_TOKEN  shift, and go to state 162
+    LT_EQ_TOKEN  shift, and go to state 163
+    '>'          shift, and go to state 164
+    '<'          shift, and go to state 165
+
+    $default  reduce using rule 99 (Equality_expression)
+
+
+State 113
+
+  102 Relational_expression: Additive_expression .
+  108 Additive_expression: Additive_expression . '+' Multiplicative_expression
+  109                    | Additive_expression . '-' Multiplicative_expression
+
+    '+'  shift, and go to state 166
+    '-'  shift, and go to state 167
+
+    $default  reduce using rule 102 (Relational_expression)
+
+
+State 114
+
+  107 Additive_expression: Multiplicative_expression .
+  111 Multiplicative_expression: Multiplicative_expression . '*' Unary_expression
+  112                          | Multiplicative_expression . '/' Unary_expression
+  113                          | Multiplicative_expression . '%' Unary_expression
+
+    '*'  shift, and go to state 168
+    '/'  shift, and go to state 169
+    '%'  shift, and go to state 170
+
+    $default  reduce using rule 107 (Additive_expression)
+
+
+State 115
+
+   89 Assignment_expression: Unary_expression . '=' Assignment_expression
+   90                      | Unary_expression . MINUS_EQ_TOKEN Assignment_expression
+   91                      | Unary_expression . PLUS_EQ_TOKEN Assignment_expression
+   92                      | Unary_expression . MULT_EQ_TOKEN Assignment_expression
+   93                      | Unary_expression . DIV_EQ_TOKEN Assignment_expression
+   94                      | Unary_expression . MOD_EQ_TOKEN Assignment_expression
+  110 Multiplicative_expression: Unary_expression .
+
+    DIV_EQ_TOKEN    shift, and go to state 171
+    MINUS_EQ_TOKEN  shift, and go to state 172
+    MULT_EQ_TOKEN   shift, and go to state 173
+    MOD_EQ_TOKEN    shift, and go to state 174
+    PLUS_EQ_TOKEN   shift, and go to state 175
+    '='             shift, and go to state 176
+
+    $default  reduce using rule 110 (Multiplicative_expression)
+
+
+State 116
+
+  116 Unary_expression: Postfix_expression .
+  119 Real_postfix_expression: Postfix_expression . PLUS_PLUS_TOKEN
+  120                        | Postfix_expression . MINUS_MINUS_TOKEN
+
+    MINUS_MINUS_TOKEN  shift, and go to state 177
+    PLUS_PLUS_TOKEN    shift, and go to state 178
+
+    $default  reduce using rule 116 (Unary_expression)
+
+
+State 117
+
+  118 Postfix_expression: Real_postfix_expression .
+  159 Field_access: Real_postfix_expression . '.' ID_TOKEN
+
+    '.'  shift, and go to state 179
+
+    $default  reduce using rule 118 (Postfix_expression)
+
+
+State 118
+
+  117 Postfix_expression: Primary_expression .
+
+    $default  reduce using rule 117 (Postfix_expression)
+
+
+State 119
+
+  122 Primary_expression: Not_just_name .
+  158 Field_access: Not_just_name . '.' ID_TOKEN
+
+    '.'  shift, and go to state 180
+
+    $default  reduce using rule 122 (Primary_expression)
+
+
+State 120
+
+  123 Not_just_name: Special_name .
+  164 Method_access: Special_name .
+
+    '('       reduce using rule 164 (Method_access)
+    $default  reduce using rule 123 (Not_just_name)
+
+
+State 121
+
+  124 Not_just_name: New_allocation_expression .
+
+    $default  reduce using rule 124 (Not_just_name)
+
+
+State 122
+
+  128 New_allocation_expression: Plain_new_allocation_expression .
+
+    $default  reduce using rule 128 (New_allocation_expression)
+
+
+State 123
+
+  130 Plain_new_allocation_expression: Class_allocation_expression .
+
+    $default  reduce using rule 130 (Plain_new_allocation_expression)
+
+
+State 124
+
+  129 Plain_new_allocation_expression: Array_allocation_expression .
+  131                                | Array_allocation_expression . '{' '}'
+  132                                | Array_allocation_expression . '{' Array_initializers '}'
+
+    '{'  shift, and go to state 181
+
+    $default  reduce using rule 129 (Plain_new_allocation_expression)
+
+
+State 125
+
+  125 Not_just_name: Complex_primary .
+
+    $default  reduce using rule 125 (Not_just_name)
+
+
+State 126
+
+  148 Complex_primary: Complex_primary_2 .
+  163 Method_access: Complex_primary_2 .
+
+    '('       reduce using rule 163 (Method_access)
+    $default  reduce using rule 148 (Complex_primary)
+
+
+State 127
+
+  154 Complex_primary_2: Array_access .
+
+    $default  reduce using rule 154 (Complex_primary_2)
+
+
+State 128
+
+  155 Complex_primary_2: Field_access .
+
+    $default  reduce using rule 155 (Complex_primary_2)
+
+
+State 129
+
+  156 Complex_primary_2: Method_call .
+
+    $default  reduce using rule 156 (Complex_primary_2)
+
+
+State 130
+
+  161 Method_call: Method_access . '(' Argument_list ')'
+  162            | Method_access . '(' ')'
+
+    '('  shift, and go to state 182
+
+
+State 131
+
+   63 Variable_declaration_statement: Type_specifier . Variable_declarators ';'
+
+    ID_TOKEN  shift, and go to state 183
+
+    Variable_declarators  go to state 184
+    Variable_declarator   go to state 69
+
+
+State 132
+
+  121 Primary_expression: Identifier .
+  136 Type_name: Identifier .
+  160 Field_access: Identifier . '.' THIS_TOKEN
+  165 Method_access: Identifier .
+  169 Identifier: Identifier . '.' ID_TOKEN
+
+    '.'  shift, and go to state 185
+
+    DIM_TOKEN  reduce using rule 136 (Type_name)
+    ID_TOKEN   reduce using rule 136 (Type_name)
+    '('        reduce using rule 165 (Method_access)
+    $default   reduce using rule 121 (Primary_expression)
+
+
+State 133
+
+   50 Variable_declarator: ID_TOKEN '=' . Variable_initializer
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '{'                shift, and go to state 186
+    '('                shift, and go to state 96
+
+    Variable_initializer             go to state 187
+    Expression                       go to state 188
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 134
+
+   34 Method_definition: ID_TOKEN '(' . Parameter_list ')'
+   35                  | ID_TOKEN '(' . ')'
+
+    BOOLEAN_TOKEN  shift, and go to state 35
+    CHAR_TOKEN     shift, and go to state 36
+    DOUBLE_TOKEN   shift, and go to state 37
+    INT_TOKEN      shift, and go to state 38
+    ID_TOKEN       shift, and go to state 17
+    ')'            shift, and go to state 189
+
+    Parameter_list  go to state 190
+    Parameter       go to state 73
+    Type_name       go to state 49
+    Primitive_type  go to state 50
+    Type_specifier  go to state 74
+    Identifier      go to state 52
+
+
+State 135
+
+   40 Method_body: ';' .
+
+    $default  reduce using rule 40 (Method_body)
+
+
+State 136
+
+   32 Method_declaration: Type_specifier Method_definition Method_body .
+
+    $default  reduce using rule 32 (Method_declaration)
+
+
+State 137
+
+   39 Method_body: Statement_block .
+
+    $default  reduce using rule 39 (Method_body)
+
+
+State 138
+
+   48 Variable_declarators: Variable_declarators ',' . Variable_declarator
+
+    ID_TOKEN  shift, and go to state 183
+
+    Variable_declarator  go to state 191
+
+
+State 139
+
+   19 Class_definition: Modifier CLASS_TOKEN ID_TOKEN EXTEND_TOKEN ID_TOKEN .
+
+    $default  reduce using rule 19 (Class_definition)
+
+
+State 140
+
+   43 Constructor_declarator: ID_TOKEN '(' Parameter_list ')' .
+
+    $default  reduce using rule 43 (Constructor_declarator)
+
+
+State 141
+
+   37 Parameter_list: Parameter_list ',' . Parameter
+
+    BOOLEAN_TOKEN  shift, and go to state 35
+    CHAR_TOKEN     shift, and go to state 36
+    DOUBLE_TOKEN   shift, and go to state 37
+    INT_TOKEN      shift, and go to state 38
+    ID_TOKEN       shift, and go to state 17
+
+    Parameter       go to state 192
+    Type_name       go to state 49
+    Primitive_type  go to state 50
+    Type_specifier  go to state 74
+    Identifier      go to state 52
+
+
+State 142
+
+   38 Parameter: Type_specifier ID_TOKEN .
+
+    $default  reduce using rule 38 (Parameter)
+
+
+State 143
+
+   33 Method_declaration: Modifier Type_specifier Method_definition Method_body .
+
+    $default  reduce using rule 33 (Method_declaration)
+
+
+State 144
+
+   75 Loop_statement: DO_TOKEN Statement . WHILE_TOKEN '(' Expression ')' ';'
+
+    WHILE_TOKEN  shift, and go to state 193
+
+
+State 145
+
+  121 Primary_expression: Identifier .
+  160 Field_access: Identifier . '.' THIS_TOKEN
+  165 Method_access: Identifier .
+  169 Identifier: Identifier . '.' ID_TOKEN
+
+    '.'  shift, and go to state 185
+
+    '('       reduce using rule 165 (Method_access)
+    $default  reduce using rule 121 (Primary_expression)
+
+
+State 146
+
+   76 Loop_statement: FOR_TOKEN '(' . For_init For_expression For_incr ')' Statement
+   77               | FOR_TOKEN '(' . For_init For_expression ')' Statement
+
+    BOOLEAN_TOKEN      shift, and go to state 35
+    CHAR_TOKEN         shift, and go to state 36
+    char_token         shift, and go to state 78
+    DOUBLE_TOKEN       shift, and go to state 37
+    double_token       shift, and go to state 80
+    INT_TOKEN          shift, and go to state 38
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    ';'                shift, and go to state 194
+    '('                shift, and go to state 96
+
+    Variable_declaration_statement   go to state 195
+    Expression_statement             go to state 196
+    For_init                         go to state 197
+    Expression_statements            go to state 198
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Type_name                        go to state 49
+    Primitive_type                   go to state 50
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Type_specifier                   go to state 131
+    Identifier                       go to state 132
+
+
+State 147
+
+   72 If_statement: IF_TOKEN '(' . Expression ')' Statement
+   73             | IF_TOKEN '(' . Expression ')' Statement ELSE_TOKEN Statement
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Expression                       go to state 199
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 148
+
+  157 Array_access: ID_TOKEN '[' . Expression ']'
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Expression                       go to state 200
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 149
+
+  115 Unary_expression: MINUS_MINUS_TOKEN Unary_expression .
+
+    $default  reduce using rule 115 (Unary_expression)
+
+
+State 150
+
+  133 Class_allocation_expression: NEW_TOKEN Type_name . '(' Argument_list ')'
+  134                            | NEW_TOKEN Type_name . '(' ')'
+  143 Array_allocation_expression: NEW_TOKEN Type_name . Dimension_expression
+  144                            | NEW_TOKEN Type_name . Dim
+
+    DIM_TOKEN  shift, and go to state 64
+    '('        shift, and go to state 201
+    '['        shift, and go to state 202
+
+    Dimension_expression  go to state 203
+    Dim                   go to state 204
+
+
+State 151
+
+  114 Unary_expression: PLUS_PLUS_TOKEN Unary_expression .
+
+    $default  reduce using rule 114 (Unary_expression)
+
+
+State 152
+
+   86 Return_statement: RETURN_TOKEN Expression . ';'
+
+    ';'  shift, and go to state 205
+
+
+State 153
+
+   74 Loop_statement: WHILE_TOKEN '(' . Expression ')' Statement
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Expression                       go to state 206
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 154
+
+  147 Complex_primary: '(' Expression . ')'
+
+    ')'  shift, and go to state 207
+
+
+State 155
+
+   57 Statement_block: '{' Local_statements '}' .
+
+    $default  reduce using rule 57 (Statement_block)
+
+
+State 156
+
+   60 Local_statements: Local_statements Statements .
+
+    $default  reduce using rule 60 (Local_statements)
+
+
+State 157
+
+   65 Statement: Expression_statement ';' .
+
+    $default  reduce using rule 65 (Statement)
+
+
+State 158
+
+   96 Conditional_or_expression: Conditional_or_expression OR_TOKEN . Conditional_and_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Conditional_and_expression       go to state 208
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 159
+
+   98 Conditional_and_expression: Conditional_and_expression AND_TOKEN . Equality_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Equality_expression              go to state 210
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 160
+
+  100 Equality_expression: Equality_expression EQ_EQ_TOKEN . Relational_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Relational_expression            go to state 211
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 161
+
+  101 Equality_expression: Equality_expression NOT_EQ_TOKEN . Relational_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Relational_expression            go to state 212
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 162
+
+  106 Relational_expression: Relational_expression GT_EQ_TOKEN . Additive_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Additive_expression              go to state 213
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 163
+
+  105 Relational_expression: Relational_expression LT_EQ_TOKEN . Additive_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Additive_expression              go to state 214
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 164
+
+  104 Relational_expression: Relational_expression '>' . Additive_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Additive_expression              go to state 215
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 165
+
+  103 Relational_expression: Relational_expression '<' . Additive_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Additive_expression              go to state 216
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 166
+
+  108 Additive_expression: Additive_expression '+' . Multiplicative_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Multiplicative_expression        go to state 217
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 167
+
+  109 Additive_expression: Additive_expression '-' . Multiplicative_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Multiplicative_expression        go to state 218
+    Unary_expression                 go to state 209
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 168
+
+  111 Multiplicative_expression: Multiplicative_expression '*' . Unary_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Unary_expression                 go to state 219
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 169
+
+  112 Multiplicative_expression: Multiplicative_expression '/' . Unary_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Unary_expression                 go to state 220
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 170
+
+  113 Multiplicative_expression: Multiplicative_expression '%' . Unary_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Unary_expression                 go to state 221
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 171
+
+   93 Assignment_expression: Unary_expression DIV_EQ_TOKEN . Assignment_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Assignment_expression            go to state 222
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 172
+
+   90 Assignment_expression: Unary_expression MINUS_EQ_TOKEN . Assignment_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Assignment_expression            go to state 223
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 173
+
+   92 Assignment_expression: Unary_expression MULT_EQ_TOKEN . Assignment_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Assignment_expression            go to state 224
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 174
+
+   94 Assignment_expression: Unary_expression MOD_EQ_TOKEN . Assignment_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Assignment_expression            go to state 225
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 175
+
+   91 Assignment_expression: Unary_expression PLUS_EQ_TOKEN . Assignment_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Assignment_expression            go to state 226
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 176
+
+   89 Assignment_expression: Unary_expression '=' . Assignment_expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Assignment_expression            go to state 227
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 177
+
+  120 Real_postfix_expression: Postfix_expression MINUS_MINUS_TOKEN .
+
+    $default  reduce using rule 120 (Real_postfix_expression)
+
+
+State 178
+
+  119 Real_postfix_expression: Postfix_expression PLUS_PLUS_TOKEN .
+
+    $default  reduce using rule 119 (Real_postfix_expression)
+
+
+State 179
+
+  159 Field_access: Real_postfix_expression '.' . ID_TOKEN
+
+    ID_TOKEN  shift, and go to state 228
+
+
+State 180
+
+  158 Field_access: Not_just_name '.' . ID_TOKEN
+
+    ID_TOKEN  shift, and go to state 229
+
+
+State 181
+
+  131 Plain_new_allocation_expression: Array_allocation_expression '{' . '}'
+  132                                | Array_allocation_expression '{' . Array_initializers '}'
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '{'                shift, and go to state 186
+    '}'                shift, and go to state 230
+    '('                shift, and go to state 96
+
+    Variable_initializer             go to state 231
+    Array_initializers               go to state 232
+    Expression                       go to state 188
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 182
+
+  161 Method_call: Method_access '(' . Argument_list ')'
+  162            | Method_access '(' . ')'
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+    ')'                shift, and go to state 233
+
+    Expression                       go to state 234
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Argument_list                    go to state 235
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 183
+
+   49 Variable_declarator: ID_TOKEN .
+   50                    | ID_TOKEN . '=' Variable_initializer
+
+    '='  shift, and go to state 133
+
+    $default  reduce using rule 49 (Variable_declarator)
+
+
+State 184
+
+   48 Variable_declarators: Variable_declarators . ',' Variable_declarator
+   63 Variable_declaration_statement: Type_specifier Variable_declarators . ';'
+
+    ';'  shift, and go to state 236
+    ','  shift, and go to state 138
+
+
+State 185
+
+  160 Field_access: Identifier '.' . THIS_TOKEN
+  169 Identifier: Identifier '.' . ID_TOKEN
+
+    ID_TOKEN    shift, and go to state 55
+    THIS_TOKEN  shift, and go to state 237
+
+
+State 186
+
+   52 Variable_initializer: '{' . '}'
+   53                     | '{' . Array_initializers '}'
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '{'                shift, and go to state 186
+    '}'                shift, and go to state 238
+    '('                shift, and go to state 96
+
+    Variable_initializer             go to state 231
+    Array_initializers               go to state 239
+    Expression                       go to state 188
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 187
+
+   50 Variable_declarator: ID_TOKEN '=' Variable_initializer .
+
+    $default  reduce using rule 50 (Variable_declarator)
+
+
+State 188
+
+   51 Variable_initializer: Expression .
+
+    $default  reduce using rule 51 (Variable_initializer)
+
+
+State 189
+
+   35 Method_definition: ID_TOKEN '(' ')' .
+
+    $default  reduce using rule 35 (Method_definition)
+
+
+State 190
+
+   34 Method_definition: ID_TOKEN '(' Parameter_list . ')'
+   37 Parameter_list: Parameter_list . ',' Parameter
+
+    ')'  shift, and go to state 240
+    ','  shift, and go to state 141
+
+
+State 191
+
+   48 Variable_declarators: Variable_declarators ',' Variable_declarator .
+
+    $default  reduce using rule 48 (Variable_declarators)
+
+
+State 192
+
+   37 Parameter_list: Parameter_list ',' Parameter .
+
+    $default  reduce using rule 37 (Parameter_list)
+
+
+State 193
+
+   75 Loop_statement: DO_TOKEN Statement WHILE_TOKEN . '(' Expression ')' ';'
+
+    '('  shift, and go to state 241
+
+
+State 194
+
+   80 For_init: ';' .
+
+    $default  reduce using rule 80 (For_init)
+
+
+State 195
+
+   79 For_init: Variable_declaration_statement .
+
+    $default  reduce using rule 79 (For_init)
+
+
+State 196
+
+   84 Expression_statements: Expression_statement .
+
+    $default  reduce using rule 84 (Expression_statements)
+
+
+State 197
+
+   76 Loop_statement: FOR_TOKEN '(' For_init . For_expression For_incr ')' Statement
+   77               | FOR_TOKEN '(' For_init . For_expression ')' Statement
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    ';'                shift, and go to state 242
+    '('                shift, and go to state 96
+
+    For_expression                   go to state 243
+    Expression                       go to state 244
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 198
+
+   78 For_init: Expression_statements . ';'
+   85 Expression_statements: Expression_statements . ',' Expression_statement
+
+    ';'  shift, and go to state 245
+    ','  shift, and go to state 246
+
+
+State 199
+
+   72 If_statement: IF_TOKEN '(' Expression . ')' Statement
+   73             | IF_TOKEN '(' Expression . ')' Statement ELSE_TOKEN Statement
+
+    ')'  shift, and go to state 247
+
+
+State 200
+
+  157 Array_access: ID_TOKEN '[' Expression . ']'
+
+    ']'  shift, and go to state 248
+
+
+State 201
+
+  133 Class_allocation_expression: NEW_TOKEN Type_name '(' . Argument_list ')'
+  134                            | NEW_TOKEN Type_name '(' . ')'
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+    ')'                shift, and go to state 249
+
+    Expression                       go to state 234
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Argument_list                    go to state 250
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 202
+
+  145 Dimension_expression: '[' . Expression ']'
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Expression                       go to state 251
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 203
+
+  143 Array_allocation_expression: NEW_TOKEN Type_name Dimension_expression .
+
+    $default  reduce using rule 143 (Array_allocation_expression)
+
+
+State 204
+
+  144 Array_allocation_expression: NEW_TOKEN Type_name Dim .
+
+    $default  reduce using rule 144 (Array_allocation_expression)
+
+
+State 205
+
+   86 Return_statement: RETURN_TOKEN Expression ';' .
+
+    $default  reduce using rule 86 (Return_statement)
+
+
+State 206
+
+   74 Loop_statement: WHILE_TOKEN '(' Expression . ')' Statement
+
+    ')'  shift, and go to state 252
+
+
+State 207
+
+  147 Complex_primary: '(' Expression ')' .
+
+    $default  reduce using rule 147 (Complex_primary)
+
+
+State 208
+
+   96 Conditional_or_expression: Conditional_or_expression OR_TOKEN Conditional_and_expression .
+   98 Conditional_and_expression: Conditional_and_expression . AND_TOKEN Equality_expression
+
+    AND_TOKEN  shift, and go to state 159
+
+    $default  reduce using rule 96 (Conditional_or_expression)
+
+
+State 209
+
+  110 Multiplicative_expression: Unary_expression .
+
+    $default  reduce using rule 110 (Multiplicative_expression)
+
+
+State 210
+
+   98 Conditional_and_expression: Conditional_and_expression AND_TOKEN Equality_expression .
+  100 Equality_expression: Equality_expression . EQ_EQ_TOKEN Relational_expression
+  101                    | Equality_expression . NOT_EQ_TOKEN Relational_expression
+
+    EQ_EQ_TOKEN   shift, and go to state 160
+    NOT_EQ_TOKEN  shift, and go to state 161
+
+    $default  reduce using rule 98 (Conditional_and_expression)
+
+
+State 211
+
+  100 Equality_expression: Equality_expression EQ_EQ_TOKEN Relational_expression .
+  103 Relational_expression: Relational_expression . '<' Additive_expression
+  104                      | Relational_expression . '>' Additive_expression
+  105                      | Relational_expression . LT_EQ_TOKEN Additive_expression
+  106                      | Relational_expression . GT_EQ_TOKEN Additive_expression
+
+    GT_EQ_TOKEN  shift, and go to state 162
+    LT_EQ_TOKEN  shift, and go to state 163
+    '>'          shift, and go to state 164
+    '<'          shift, and go to state 165
+
+    $default  reduce using rule 100 (Equality_expression)
+
+
+State 212
+
+  101 Equality_expression: Equality_expression NOT_EQ_TOKEN Relational_expression .
+  103 Relational_expression: Relational_expression . '<' Additive_expression
+  104                      | Relational_expression . '>' Additive_expression
+  105                      | Relational_expression . LT_EQ_TOKEN Additive_expression
+  106                      | Relational_expression . GT_EQ_TOKEN Additive_expression
+
+    GT_EQ_TOKEN  shift, and go to state 162
+    LT_EQ_TOKEN  shift, and go to state 163
+    '>'          shift, and go to state 164
+    '<'          shift, and go to state 165
+
+    $default  reduce using rule 101 (Equality_expression)
+
+
+State 213
+
+  106 Relational_expression: Relational_expression GT_EQ_TOKEN Additive_expression .
+  108 Additive_expression: Additive_expression . '+' Multiplicative_expression
+  109                    | Additive_expression . '-' Multiplicative_expression
+
+    '+'  shift, and go to state 166
+    '-'  shift, and go to state 167
+
+    $default  reduce using rule 106 (Relational_expression)
+
+
+State 214
+
+  105 Relational_expression: Relational_expression LT_EQ_TOKEN Additive_expression .
+  108 Additive_expression: Additive_expression . '+' Multiplicative_expression
+  109                    | Additive_expression . '-' Multiplicative_expression
+
+    '+'  shift, and go to state 166
+    '-'  shift, and go to state 167
+
+    $default  reduce using rule 105 (Relational_expression)
+
+
+State 215
+
+  104 Relational_expression: Relational_expression '>' Additive_expression .
+  108 Additive_expression: Additive_expression . '+' Multiplicative_expression
+  109                    | Additive_expression . '-' Multiplicative_expression
+
+    '+'  shift, and go to state 166
+    '-'  shift, and go to state 167
+
+    $default  reduce using rule 104 (Relational_expression)
+
+
+State 216
+
+  103 Relational_expression: Relational_expression '<' Additive_expression .
+  108 Additive_expression: Additive_expression . '+' Multiplicative_expression
+  109                    | Additive_expression . '-' Multiplicative_expression
+
+    '+'  shift, and go to state 166
+    '-'  shift, and go to state 167
+
+    $default  reduce using rule 103 (Relational_expression)
+
+
+State 217
+
+  108 Additive_expression: Additive_expression '+' Multiplicative_expression .
+  111 Multiplicative_expression: Multiplicative_expression . '*' Unary_expression
+  112                          | Multiplicative_expression . '/' Unary_expression
+  113                          | Multiplicative_expression . '%' Unary_expression
+
+    '*'  shift, and go to state 168
+    '/'  shift, and go to state 169
+    '%'  shift, and go to state 170
+
+    $default  reduce using rule 108 (Additive_expression)
+
+
+State 218
+
+  109 Additive_expression: Additive_expression '-' Multiplicative_expression .
+  111 Multiplicative_expression: Multiplicative_expression . '*' Unary_expression
+  112                          | Multiplicative_expression . '/' Unary_expression
+  113                          | Multiplicative_expression . '%' Unary_expression
+
+    '*'  shift, and go to state 168
+    '/'  shift, and go to state 169
+    '%'  shift, and go to state 170
+
+    $default  reduce using rule 109 (Additive_expression)
+
+
+State 219
+
+  111 Multiplicative_expression: Multiplicative_expression '*' Unary_expression .
+
+    $default  reduce using rule 111 (Multiplicative_expression)
+
+
+State 220
+
+  112 Multiplicative_expression: Multiplicative_expression '/' Unary_expression .
+
+    $default  reduce using rule 112 (Multiplicative_expression)
+
+
+State 221
+
+  113 Multiplicative_expression: Multiplicative_expression '%' Unary_expression .
+
+    $default  reduce using rule 113 (Multiplicative_expression)
+
+
+State 222
+
+   93 Assignment_expression: Unary_expression DIV_EQ_TOKEN Assignment_expression .
+
+    $default  reduce using rule 93 (Assignment_expression)
+
+
+State 223
+
+   90 Assignment_expression: Unary_expression MINUS_EQ_TOKEN Assignment_expression .
+
+    $default  reduce using rule 90 (Assignment_expression)
+
+
+State 224
+
+   92 Assignment_expression: Unary_expression MULT_EQ_TOKEN Assignment_expression .
+
+    $default  reduce using rule 92 (Assignment_expression)
+
+
+State 225
+
+   94 Assignment_expression: Unary_expression MOD_EQ_TOKEN Assignment_expression .
+
+    $default  reduce using rule 94 (Assignment_expression)
+
+
+State 226
+
+   91 Assignment_expression: Unary_expression PLUS_EQ_TOKEN Assignment_expression .
+
+    $default  reduce using rule 91 (Assignment_expression)
+
+
+State 227
+
+   89 Assignment_expression: Unary_expression '=' Assignment_expression .
+
+    $default  reduce using rule 89 (Assignment_expression)
+
+
+State 228
+
+  159 Field_access: Real_postfix_expression '.' ID_TOKEN .
+
+    $default  reduce using rule 159 (Field_access)
+
+
+State 229
+
+  158 Field_access: Not_just_name '.' ID_TOKEN .
+
+    $default  reduce using rule 158 (Field_access)
+
+
+State 230
+
+  131 Plain_new_allocation_expression: Array_allocation_expression '{' '}' .
+
+    $default  reduce using rule 131 (Plain_new_allocation_expression)
+
+
+State 231
+
+   54 Array_initializers: Variable_initializer .
+
+    $default  reduce using rule 54 (Array_initializers)
+
+
+State 232
+
+   55 Array_initializers: Array_initializers . ',' Variable_initializer
+   56                   | Array_initializers . ','
+  132 Plain_new_allocation_expression: Array_allocation_expression '{' Array_initializers . '}'
+
+    '}'  shift, and go to state 253
+    ','  shift, and go to state 254
+
+
+State 233
+
+  162 Method_call: Method_access '(' ')' .
+
+    $default  reduce using rule 162 (Method_call)
+
+
+State 234
+
+  141 Argument_list: Expression .
+
+    $default  reduce using rule 141 (Argument_list)
+
+
+State 235
+
+  142 Argument_list: Argument_list . ',' Expression
+  161 Method_call: Method_access '(' Argument_list . ')'
+
+    ')'  shift, and go to state 255
+    ','  shift, and go to state 256
+
+
+State 236
+
+   63 Variable_declaration_statement: Type_specifier Variable_declarators ';' .
+
+    $default  reduce using rule 63 (Variable_declaration_statement)
+
+
+State 237
+
+  160 Field_access: Identifier '.' THIS_TOKEN .
+
+    $default  reduce using rule 160 (Field_access)
+
+
+State 238
+
+   52 Variable_initializer: '{' '}' .
+
+    $default  reduce using rule 52 (Variable_initializer)
+
+
+State 239
+
+   53 Variable_initializer: '{' Array_initializers . '}'
+   55 Array_initializers: Array_initializers . ',' Variable_initializer
+   56                   | Array_initializers . ','
+
+    '}'  shift, and go to state 257
+    ','  shift, and go to state 254
+
+
+State 240
+
+   34 Method_definition: ID_TOKEN '(' Parameter_list ')' .
+
+    $default  reduce using rule 34 (Method_definition)
+
+
+State 241
+
+   75 Loop_statement: DO_TOKEN Statement WHILE_TOKEN '(' . Expression ')' ';'
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Expression                       go to state 258
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 242
+
+   82 For_expression: ';' .
+
+    $default  reduce using rule 82 (For_expression)
+
+
+State 243
+
+   76 Loop_statement: FOR_TOKEN '(' For_init For_expression . For_incr ')' Statement
+   77               | FOR_TOKEN '(' For_init For_expression . ')' Statement
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+    ')'                shift, and go to state 259
+
+    Expression_statement             go to state 196
+    For_incr                         go to state 260
+    Expression_statements            go to state 261
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 244
+
+   81 For_expression: Expression . ';'
+
+    ';'  shift, and go to state 262
+
+
+State 245
+
+   78 For_init: Expression_statements ';' .
+
+    $default  reduce using rule 78 (For_init)
+
+
+State 246
+
+   85 Expression_statements: Expression_statements ',' . Expression_statement
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Expression_statement             go to state 263
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 247
+
+   72 If_statement: IF_TOKEN '(' Expression ')' . Statement
+   73             | IF_TOKEN '(' Expression ')' . Statement ELSE_TOKEN Statement
+
+    char_token         shift, and go to state 78
+    DO_TOKEN           shift, and go to state 79
+    double_token       shift, and go to state 80
+    FOR_TOKEN          shift, and go to state 81
+    IF_TOKEN           shift, and go to state 82
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    RETURN_TOKEN       shift, and go to state 88
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    WHILE_TOKEN        shift, and go to state 93
+    ';'                shift, and go to state 94
+    '{'                shift, and go to state 62
+    '('                shift, and go to state 96
+
+    Statement_block                  go to state 97
+    Statement                        go to state 264
+    Empty_statement                  go to state 102
+    Expression_statement             go to state 103
+    If_statement                     go to state 104
+    Loop_statement                   go to state 105
+    Return_statement                 go to state 106
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 248
+
+  157 Array_access: ID_TOKEN '[' Expression ']' .
+
+    $default  reduce using rule 157 (Array_access)
+
+
+State 249
+
+  134 Class_allocation_expression: NEW_TOKEN Type_name '(' ')' .
+
+    $default  reduce using rule 134 (Class_allocation_expression)
+
+
+State 250
+
+  133 Class_allocation_expression: NEW_TOKEN Type_name '(' Argument_list . ')'
+  142 Argument_list: Argument_list . ',' Expression
+
+    ')'  shift, and go to state 265
+    ','  shift, and go to state 256
+
+
+State 251
+
+  145 Dimension_expression: '[' Expression . ']'
+
+    ']'  shift, and go to state 266
+
+
+State 252
+
+   74 Loop_statement: WHILE_TOKEN '(' Expression ')' . Statement
+
+    char_token         shift, and go to state 78
+    DO_TOKEN           shift, and go to state 79
+    double_token       shift, and go to state 80
+    FOR_TOKEN          shift, and go to state 81
+    IF_TOKEN           shift, and go to state 82
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    RETURN_TOKEN       shift, and go to state 88
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    WHILE_TOKEN        shift, and go to state 93
+    ';'                shift, and go to state 94
+    '{'                shift, and go to state 62
+    '('                shift, and go to state 96
+
+    Statement_block                  go to state 97
+    Statement                        go to state 267
+    Empty_statement                  go to state 102
+    Expression_statement             go to state 103
+    If_statement                     go to state 104
+    Loop_statement                   go to state 105
+    Return_statement                 go to state 106
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 253
+
+  132 Plain_new_allocation_expression: Array_allocation_expression '{' Array_initializers '}' .
+
+    $default  reduce using rule 132 (Plain_new_allocation_expression)
+
+
+State 254
+
+   55 Array_initializers: Array_initializers ',' . Variable_initializer
+   56                   | Array_initializers ',' .
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '{'                shift, and go to state 186
+    '('                shift, and go to state 96
+
+    $default  reduce using rule 56 (Array_initializers)
+
+    Variable_initializer             go to state 268
+    Expression                       go to state 188
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 255
+
+  161 Method_call: Method_access '(' Argument_list ')' .
+
+    $default  reduce using rule 161 (Method_call)
+
+
+State 256
+
+  142 Argument_list: Argument_list ',' . Expression
+
+    char_token         shift, and go to state 78
+    double_token       shift, and go to state 80
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    '('                shift, and go to state 96
+
+    Expression                       go to state 269
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 257
+
+   53 Variable_initializer: '{' Array_initializers '}' .
+
+    $default  reduce using rule 53 (Variable_initializer)
+
+
+State 258
+
+   75 Loop_statement: DO_TOKEN Statement WHILE_TOKEN '(' Expression . ')' ';'
+
+    ')'  shift, and go to state 270
+
+
+State 259
+
+   77 Loop_statement: FOR_TOKEN '(' For_init For_expression ')' . Statement
+
+    char_token         shift, and go to state 78
+    DO_TOKEN           shift, and go to state 79
+    double_token       shift, and go to state 80
+    FOR_TOKEN          shift, and go to state 81
+    IF_TOKEN           shift, and go to state 82
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    RETURN_TOKEN       shift, and go to state 88
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    WHILE_TOKEN        shift, and go to state 93
+    ';'                shift, and go to state 94
+    '{'                shift, and go to state 62
+    '('                shift, and go to state 96
+
+    Statement_block                  go to state 97
+    Statement                        go to state 271
+    Empty_statement                  go to state 102
+    Expression_statement             go to state 103
+    If_statement                     go to state 104
+    Loop_statement                   go to state 105
+    Return_statement                 go to state 106
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 260
+
+   76 Loop_statement: FOR_TOKEN '(' For_init For_expression For_incr . ')' Statement
+
+    ')'  shift, and go to state 272
+
+
+State 261
+
+   83 For_incr: Expression_statements .
+   85 Expression_statements: Expression_statements . ',' Expression_statement
+
+    ','  shift, and go to state 246
+
+    $default  reduce using rule 83 (For_incr)
+
+
+State 262
+
+   81 For_expression: Expression ';' .
+
+    $default  reduce using rule 81 (For_expression)
+
+
+State 263
+
+   85 Expression_statements: Expression_statements ',' Expression_statement .
+
+    $default  reduce using rule 85 (Expression_statements)
+
+
+State 264
+
+   72 If_statement: IF_TOKEN '(' Expression ')' Statement .
+   73             | IF_TOKEN '(' Expression ')' Statement . ELSE_TOKEN Statement
+
+    ELSE_TOKEN  shift, and go to state 273
+
+    $default  reduce using rule 72 (If_statement)
+
+
+State 265
+
+  133 Class_allocation_expression: NEW_TOKEN Type_name '(' Argument_list ')' .
+
+    $default  reduce using rule 133 (Class_allocation_expression)
+
+
+State 266
+
+  145 Dimension_expression: '[' Expression ']' .
+
+    $default  reduce using rule 145 (Dimension_expression)
+
+
+State 267
+
+   74 Loop_statement: WHILE_TOKEN '(' Expression ')' Statement .
+
+    $default  reduce using rule 74 (Loop_statement)
+
+
+State 268
+
+   55 Array_initializers: Array_initializers ',' Variable_initializer .
+
+    $default  reduce using rule 55 (Array_initializers)
+
+
+State 269
+
+  142 Argument_list: Argument_list ',' Expression .
+
+    $default  reduce using rule 142 (Argument_list)
+
+
+State 270
+
+   75 Loop_statement: DO_TOKEN Statement WHILE_TOKEN '(' Expression ')' . ';'
+
+    ';'  shift, and go to state 274
+
+
+State 271
+
+   77 Loop_statement: FOR_TOKEN '(' For_init For_expression ')' Statement .
+
+    $default  reduce using rule 77 (Loop_statement)
+
+
+State 272
+
+   76 Loop_statement: FOR_TOKEN '(' For_init For_expression For_incr ')' . Statement
+
+    char_token         shift, and go to state 78
+    DO_TOKEN           shift, and go to state 79
+    double_token       shift, and go to state 80
+    FOR_TOKEN          shift, and go to state 81
+    IF_TOKEN           shift, and go to state 82
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    RETURN_TOKEN       shift, and go to state 88
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    WHILE_TOKEN        shift, and go to state 93
+    ';'                shift, and go to state 94
+    '{'                shift, and go to state 62
+    '('                shift, and go to state 96
+
+    Statement_block                  go to state 97
+    Statement                        go to state 275
+    Empty_statement                  go to state 102
+    Expression_statement             go to state 103
+    If_statement                     go to state 104
+    Loop_statement                   go to state 105
+    Return_statement                 go to state 106
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 273
+
+   73 If_statement: IF_TOKEN '(' Expression ')' Statement ELSE_TOKEN . Statement
+
+    char_token         shift, and go to state 78
+    DO_TOKEN           shift, and go to state 79
+    double_token       shift, and go to state 80
+    FOR_TOKEN          shift, and go to state 81
+    IF_TOKEN           shift, and go to state 82
+    ID_TOKEN           shift, and go to state 83
+    int_token          shift, and go to state 84
+    MINUS_MINUS_TOKEN  shift, and go to state 85
+    NEW_TOKEN          shift, and go to state 86
+    PLUS_PLUS_TOKEN    shift, and go to state 87
+    RETURN_TOKEN       shift, and go to state 88
+    SUPER_TOKEN        shift, and go to state 89
+    THIS_TOKEN         shift, and go to state 90
+    TRUE_TOKEN         shift, and go to state 91
+    FALSE_TOKEN        shift, and go to state 92
+    WHILE_TOKEN        shift, and go to state 93
+    ';'                shift, and go to state 94
+    '{'                shift, and go to state 62
+    '('                shift, and go to state 96
+
+    Statement_block                  go to state 97
+    Statement                        go to state 276
+    Empty_statement                  go to state 102
+    Expression_statement             go to state 103
+    If_statement                     go to state 104
+    Loop_statement                   go to state 105
+    Return_statement                 go to state 106
+    Expression                       go to state 107
+    Assignment_expression            go to state 108
+    Conditional_or_expression        go to state 109
+    Conditional_and_expression       go to state 110
+    Equality_expression              go to state 111
+    Relational_expression            go to state 112
+    Additive_expression              go to state 113
+    Multiplicative_expression        go to state 114
+    Unary_expression                 go to state 115
+    Postfix_expression               go to state 116
+    Real_postfix_expression          go to state 117
+    Primary_expression               go to state 118
+    Not_just_name                    go to state 119
+    Special_name                     go to state 120
+    New_allocation_expression        go to state 121
+    Plain_new_allocation_expression  go to state 122
+    Class_allocation_expression      go to state 123
+    Array_allocation_expression      go to state 124
+    Complex_primary                  go to state 125
+    Complex_primary_2                go to state 126
+    Array_access                     go to state 127
+    Field_access                     go to state 128
+    Method_call                      go to state 129
+    Method_access                    go to state 130
+    Identifier                       go to state 145
+
+
+State 274
+
+   75 Loop_statement: DO_TOKEN Statement WHILE_TOKEN '(' Expression ')' ';' .
+
+    $default  reduce using rule 75 (Loop_statement)
+
+
+State 275
+
+   76 Loop_statement: FOR_TOKEN '(' For_init For_expression For_incr ')' Statement .
+
+    $default  reduce using rule 76 (Loop_statement)
+
+
+State 276
+
+   73 If_statement: IF_TOKEN '(' Expression ')' Statement ELSE_TOKEN Statement .
+
+    $default  reduce using rule 73 (If_statement)

@@ -2,15 +2,15 @@ package test;
 
 public class Main {
 
-	public static void main(String[] args){
+	public  void main(String[] args){
 		//TODO Auto-generated method stub
 		
-		char p3 = 'j';
+		char p = 'j';
 		
 		double e3 = 2.35;
 		double m3 = e3 * 23;
 
-		float z3=0;
+		double z3=0;
 		z3=e3/m3;
 
 		int m3 = 2 + 3;
@@ -22,19 +22,19 @@ public class Main {
 		else
 			n3=m3;
 
-		if(m3>7){
+		if(m>7){
 		   m3=2;
 		}			
 
 
 		int i3=0;
-		while(i3<11){
-			System.out.println(i3);
+		while(i<11){
+			System.out.println(i);
 			i3++;
 		}
 		
 		//Inicijalizacija niza
-		int []niz;
+		int [ ]niz;
 		niz=new int[10];
 
 		for(i3=0;i3<10;i3++){
@@ -43,9 +43,7 @@ public class Main {
 		//drugi nacin inicijalizacije niza
 		int[] niz2={10,20,30,40,60};
 	        
-                //Inicijalizacija matrica
-		int[][] matrica;
-		matrica=new int[10][5];
+                
 
 
 	}

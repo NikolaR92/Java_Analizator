@@ -26,9 +26,9 @@ public class Person{
 	}
 
 	//komentar
-	public Person(Person ab){
-		this.name = ab.getName( );
-		super.surname = ab.surname;
+	public Person(Person a){
+		this.name = a.getName( );
+		super.surname = a.surname;
 		age = ab.age;
 	}	
 	

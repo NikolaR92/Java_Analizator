@@ -9,7 +9,10 @@
 using namespace std;
 
 #include "Syntree.hpp"
+#include "InnerSynTree.hpp"
 #include "parser.tab.hpp"
+
+extern stack<map<string,HashT*>> stek_promenljivih;
 
 %}
 
@@ -34,7 +37,6 @@ using namespace std;
 "boolean" return BOOLEAN_TOKEN;
 "char" return CHAR_TOKEN;
 "int" return INT_TOKEN;
-"float" return FLOAT_TOKEN;
 "double" return DOUBLE_TOKEN;
 "if" return IF_TOKEN;
 "else" return ELSE_TOKEN;
