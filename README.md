@@ -2,7 +2,7 @@
 
 ---
 ## Opis programa
-Program radi semantičku analizu Java koda, gde ispisuje gde se greška nalazi i tip greške za dati java fajl.
+	Program radi semantičku analizu Java koda, gde ispisuje gde se greška nalazi i tip greške za dati java fajl.
 Predstavlja seminarski rad za predmet Konstukcije kompilatora na Matematičkom fakultetu.
 ---
 ## Zavisnosti
@@ -52,16 +52,16 @@ $ git push origin naziv_grane
 ```
 ---
 
-##Kompajliranje koda
+## Kompajliranje koda
 ```sh
 $ make
 ```
 ---
-##Upustva za rukovanje programom
+## Upustva za rukovanje programom
 ```sh
 $ ./java java_fajl
 ```
 ---
-##Autori
+## Autori
 Jovana Jelenković 169/2014
 Nikola Ristić 310/2011
