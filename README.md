@@ -1,8 +1,9 @@
 # Java_Analizator
 
----
+
 ## Opis programa
-	Program radi semantičku analizu Java koda, gde ispisuje gde se greška nalazi i tip greške za dati java fajl.
+
+Program radi semantičku analizu Java koda, gde ispisuje gde se greška nalazi i tip greške za dati java fajl.
 Predstavlja seminarski rad za predmet Konstukcije kompilatora na Matematičkom fakultetu.
 ---
 ## Zavisnosti
@@ -63,5 +64,6 @@ $ ./java java_fajl
 ```
 ---
 ## Autori
+
 Jovana Jelenković 169/2014
 Nikola Ristić 310/2011
